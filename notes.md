@@ -34,3 +34,20 @@ Here is the documentation: [String Javadocs](https://docs.oracle.com/en/java/jav
   - etc.
 - In picture, each box is a separate class.
 - use static methods.
+- Collection will return a list or a set of some kind
+  - Collection
+    - List
+      - ArrayList
+      - LinkeList
+    - Set
+      - TreeSet
+      - HashSet
+- return any one of these as the piecemoves calculator
+  BishopMovesCalculator
+- package chess.pieces;
+- import chess.ChessBoard;
+- import chess.ChessMove;
+- import chess.ChessPosition;
+- import java.util.Collection;
+- public class BishopMovesCalculator{
+  - public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) { return
