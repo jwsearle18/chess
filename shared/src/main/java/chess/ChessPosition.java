@@ -31,6 +31,6 @@ public class ChessPosition {
      */
     public int getColumn() {
 
-        return column;
+        return col;
     }
 }
