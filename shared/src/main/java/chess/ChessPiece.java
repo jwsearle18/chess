@@ -12,9 +12,9 @@ import java.util.Objects;
  */
 public class ChessPiece {
 
-    private ChessGame.TeamColor pieceColor;
+    private final ChessGame.TeamColor pieceColor;
 
-    private ChessPiece.PieceType type;
+    private final ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
@@ -57,31 +57,35 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    public boolean inbounds() {
-        if (x < 7 && y < 7 && x >= 0 && y >=0) {
-            return true;
-        } else {
-            return false;
-        }
+    public boolean inBounds(ChessPosition position) {
+        return position.getRow() < 9 && position.getColumn() < 9 && position.getRow() > 0 && position.getColumn() > 0;
     }
 
-    public boolean isFriend() {
-        if () {
-            return true;
-        } else {
-            return false;
-        }
+    public boolean isFriend(ChessPiece piece) {
+        return this.getTeamColor() == piece.getTeamColor();
     }
 
-/**    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition){
- *  create new arrayList
- *
- *  possiblePositions = []
- *  square calculatePossiblePosition(ChessPosition myPosition)
- *  while inbounds()
- *          myPosition[col + 1] && row + 1; i < length
- *
- *
+//    public square isPossiblePosition(ChessPosition position) {
+//        ChessPiece pieceAtPosition =
+//        if(not isFriend(position) && inBounds(position)){
+//            return position;
+//        }
+//    }
+//
+//
+//    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+//
+//
+//        Collection possiblePositions; []
+//   square calculatePossiblePosition(ChessPosition myPosition){
+//            while (inBounds(myPosition)) {
+//                myPosition[myPosition.getColumn() + 1] && row + 1;
+//                i < length
+//            }
+//            create new arrayList;
+//        }
+
+ /*
  *  for i in possible positions
  *      if isEmpty() && isInBounds() && not isFriend() {
  *          add to arrayList
@@ -98,6 +102,11 @@ public class ChessPiece {
  *  }
 */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+
+
+        if(board.getPiece(myPosition).getPieceType() == PieceType.BISHOP) {
+            bishopMoves(board, myPosition);
+        }
         return new ArrayList<>();
     }
 
