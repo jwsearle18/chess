@@ -57,6 +57,22 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+    public boolean inbounds() {
+        if (x < 7 && y < 7 && x >= 0 && y >=0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isfriend() {
+        if () {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 /**    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition){
  *  create new arrayList
  *
