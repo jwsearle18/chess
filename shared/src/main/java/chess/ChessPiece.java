@@ -65,7 +65,7 @@ public class ChessPiece {
         }
     }
 
-    public boolean isfriend() {
+    public boolean isFriend() {
         if () {
             return true;
         } else {
@@ -88,9 +88,9 @@ public class ChessPiece {
  *
  *      diagonal move function
  *
- *      if isfriend()
+ *      if isFriend()
  *          break
- *      if isEnemy()
+ *      if not isFriend()
  *          add move
  *          break
  *      }
