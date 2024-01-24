@@ -166,10 +166,18 @@ public class ChessPiece {
 
             directions.add(List.of(1,0));
 
+            if(myPosition.getRow() == 2) {
+                directions.add(List.of(2,0));
+            }
+
         }
         if(board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.BLACK) {
 
             directions.add(List.of(-1,0));
+
+            if(myPosition.getRow() == 7) {
+                directions.add(List.of(-2,0));
+            }
 
         }
 
@@ -216,9 +224,9 @@ public class ChessPiece {
         if(board.getPiece(myPosition).getPieceType() == PieceType.KNIGHT) {
             return knightMoves(board, myPosition);
         }
-//        if(board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
-//            return pawnMoves(board, myPosition);
-//        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
+            return pawnMoves(board, myPosition);
+        }
 //        if(board.getPiece(myPosition).getPieceType() == PieceType.QUEEN) {
 //            return queenMoves(board, myPosition);
 //        }
