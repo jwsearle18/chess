@@ -86,17 +86,40 @@ public class ChessPiece {
 //
 //    }
 
+    private void directionMove(ChessPosition position, List<List<Integer>> list, int rowChange, int colChange) {
+        int multiplier = 1;
+        while(inBounds(position)) {
+            list.add(List.of(rowChange*multiplier,colChange*multiplier));
+            int newRow = position.getRow() + rowChange;
+            int newCol = position.getColumn() + colChange;
+            position = new ChessPosition(newRow, newCol);
+            multiplier += 1;
+        }
+    }
 
-//    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
-//        HashSet<ChessMove> diagonalMoves =  new HashSet<>();
-//
-//            lineMover(board, myPosition, diagonalMoves, 1, 1);
-//            lineMover(board, myPosition, diagonalMoves, -1, 1);
-//            lineMover(board, myPosition, diagonalMoves, 1, -1);
-//            lineMover(board, myPosition, diagonalMoves, -1, -1);
-//
-//            return diagonalMoves;
-//        }
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> validMoves =  new HashSet<>();
+        List<List<Integer>> directions = new ArrayList<>();
+
+        directionMove(myPosition, directions, 1, 1);
+        directionMove(myPosition, directions, -1, 1);
+        directionMove(myPosition, directions, 1, -1);
+        directionMove(myPosition, directions, -1, -1);
+
+        for(List<Integer> direction : directions){
+            int rowChange = direction.get(0);
+            int colChange = direction.get(1);
+
+            ChessPosition newPosition = new ChessPosition(myPosition.getRow() + rowChange, myPosition.getColumn() + colChange);
+
+            if(!isFriend(board.getPiece(newPosition)) || board.getPiece(newPosition) == null) {
+                ChessMove move = new ChessMove(myPosition, newPosition, null);
+                validMoves.add(move);
+            }
+
+        }
+        return validMoves;
+        }
 
 //    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
 //
@@ -233,9 +256,9 @@ public class ChessPiece {
 */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-//        if(board.getPiece(myPosition).getPieceType() == PieceType.BISHOP) {
-//            return bishopMoves(board, myPosition);
-//        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.BISHOP) {
+            return bishopMoves(board, myPosition);
+        }
         if(board.getPiece(myPosition).getPieceType() == PieceType.KING) {
             return kingMoves(board, myPosition);
         }

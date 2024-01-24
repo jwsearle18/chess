@@ -51,3 +51,6 @@ Here is the documentation: [String Javadocs](https://docs.oracle.com/en/java/jav
 - import java.util.Collection;
 - public class BishopMovesCalculator{
   - public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) { return
+### 1/24
+###### Deep Copy v. Shallow Copy
+- copy the objects and all objects it references, recursively.
