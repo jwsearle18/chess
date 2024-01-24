@@ -1,9 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a single chess piece
@@ -61,7 +58,6 @@ public class ChessPiece {
     public boolean inBounds(ChessPosition position) {
         return position.getRow() >= 1 && position.getColumn() >= 1 && position.getRow() <= 8 && position.getColumn() <= 8;
     }
-
     public boolean isFriend(ChessPiece piece) {
         return piece != null && this.getTeamColor() == piece.getTeamColor();
     }
@@ -90,62 +86,6 @@ public class ChessPiece {
 //
 //    }
 
-//    public ChessPosition singleDiagonalUpRight(ChessPosition position, HashSet<ChessMove> set) {
-//        ChessPosition newPosition = new ChessPosition(position.getRow() + 1, position.getColumn() + 1);
-//        ChessMove newMove = new ChessMove(position, newPosition, null);
-//        set.add(newMove);
-//        return newPosition;
-//    }
-//
-//    public ChessPosition singleDiagonalUpLeft(ChessPosition position, HashSet<ChessMove> set) {
-//        ChessPosition newPosition = new ChessPosition(position.getRow() - 1,position.getColumn() + 1);
-//        ChessMove newMove = new ChessMove(position, newPosition, null);
-//        set.add(newMove);
-//        return newPosition;
-//    }
-//
-//    public ChessPosition singleDiagonalDownRight(ChessPosition position, HashSet<ChessMove> set) {
-//        ChessPosition newPosition = new ChessPosition(position.getRow() + 1,position.getColumn() - 1);
-//        ChessMove newMove = new ChessMove(position, newPosition, null);
-//        set.add(newMove);
-//        return newPosition;
-//    }
-//
-//    public ChessPosition singleDiagonalDownLeft(ChessPosition position, HashSet<ChessMove> set) {
-//        ChessPosition newPosition = new ChessPosition(position.getRow() - 1,position.getColumn() - 1);
-//        ChessMove newMove = new ChessMove(position, newPosition, null);
-//        set.add(newMove);
-//        return newPosition;
-//    }
-//
-//    public ChessPosition singleUp(ChessPosition position, HashSet<ChessMove> set) {
-//        ChessPosition newPosition = new ChessPosition(position.getRow() + 1, position.getColumn());
-//        ChessMove newMove = new ChessMove(position, newPosition, null);
-//        set.add(newMove);
-//        return newPosition;
-//    }
-//
-//    public ChessPosition singleDown(ChessPosition position, HashSet<ChessMove> set) {
-//        ChessPosition newPosition = new ChessPosition(position.getRow() -1, position.getColumn());
-//        ChessMove newMove = new ChessMove(position, newPosition, null);
-//        set.add(newMove);
-//        return newPosition;
-//    }
-//
-//    public ChessPosition singleRight(ChessPosition position, HashSet<ChessMove> set) {
-//        ChessPosition newPosition = new ChessPosition(position.getRow(),position.getColumn() + 1);
-//        ChessMove newMove = new ChessMove(position, newPosition, null);
-//        set.add(newMove);
-//        return newPosition;
-//    }
-//
-//    public ChessPosition singleLeft(ChessPosition position, HashSet<ChessMove> set) {
-//        ChessPosition newPosition = new ChessPosition(position.getRow(),position.getColumn() - 1);
-//        ChessMove newMove = new ChessMove(position, newPosition, null);
-//        set.add(newMove);
-//        return newPosition;
-//    }
-
 
 //    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
 //        HashSet<ChessMove> diagonalMoves =  new HashSet<>();
@@ -166,14 +106,20 @@ public class ChessPiece {
 //    }
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> validMoves = new HashSet<>();
+        List<List<Integer>> directions = new ArrayList<>();
 
-        int[][] directions = {
-                {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1}, {1,0}
-        };
+        directions.add(List.of(1,1));
+        directions.add(List.of(0,1));
+        directions.add(List.of(-1,1));
+        directions.add(List.of(-1,0));
+        directions.add(List.of(-1,-1));
+        directions.add(List.of(0,-1));
+        directions.add(List.of(1,-1));
+        directions.add(List.of(1,0));
 
-        for(int[] direction : directions){
-            int newRow = myPosition.getRow() + direction[0];
-            int newCol = myPosition.getColumn() + direction[1];
+        for(List<Integer> direction : directions){
+            int newRow = myPosition.getRow() + direction.get(0);
+            int newCol = myPosition.getColumn() + direction.get(1);
 
             ChessPosition newPosition = new ChessPosition(newRow, newCol);
             if (inBounds(newPosition)) {
@@ -187,14 +133,20 @@ public class ChessPiece {
     }
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> validMoves = new HashSet<>();
+        List<List<Integer>> directions = new ArrayList<>();
 
-        int[][] directions = {
-                {2,1}, {1,2}, {-2,1}, {-1,2}, {-2,-1}, {-1,-2}, {2,-1}, {1,-2}
-        };
+        directions.add(List.of(2,1));
+        directions.add(List.of(1,2));
+        directions.add(List.of(-2,1));
+        directions.add(List.of(-1,2));
+        directions.add(List.of(-2,-1));
+        directions.add(List.of(-1,-2));
+        directions.add(List.of(2,-1));
+        directions.add(List.of(1,-2));
 
-        for(int[] direction : directions){
-            int newRow = myPosition.getRow() + direction[0];
-            int newCol = myPosition.getColumn() + direction[1];
+        for(List<Integer> direction : directions){
+            int newRow = myPosition.getRow() + direction.get(0);
+            int newCol = myPosition.getColumn() + direction.get(1);
 
             ChessPosition newPosition = new ChessPosition(newRow, newCol);
             if (inBounds(newPosition)) {
@@ -206,9 +158,35 @@ public class ChessPiece {
         }
         return validMoves;
     }
-//    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
-//
-//    }
+    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> validMoves = new HashSet<>();
+        List<List<Integer>> directions = new ArrayList<>();
+
+        if(board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
+
+            directions.add(List.of(1,0));
+
+        }
+        if(board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.BLACK) {
+
+            directions.add(List.of(-1,0));
+
+        }
+
+        for(List<Integer> direction : directions){
+            int newRow = myPosition.getRow() + direction.get(0);
+            int newCol = myPosition.getColumn() + direction.get(1);
+
+            ChessPosition newPosition = new ChessPosition(newRow, newCol);
+            if (inBounds(newPosition)) {
+                if(!isFriend(board.getPiece(newPosition)) || board.getPiece(newPosition) == null) {
+                    ChessMove move = new ChessMove(myPosition, newPosition, null);
+                    validMoves.add(move);
+                }
+            }
+        }
+        return validMoves;
+    }
 
 
  /*
