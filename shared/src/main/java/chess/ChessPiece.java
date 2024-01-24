@@ -185,9 +185,27 @@ public class ChessPiece {
         }
         return validMoves;
     }
-//    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
-//
-//    }
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> validMoves = new HashSet<>();
+
+        int[][] directions = {
+                {2,1}, {1,2}, {-2,1}, {-1,2}, {-2,-1}, {-1,-2}, {2,-1}, {1,-2}
+        };
+
+        for(int[] direction : directions){
+            int newRow = myPosition.getRow() + direction[0];
+            int newCol = myPosition.getColumn() + direction[1];
+
+            ChessPosition newPosition = new ChessPosition(newRow, newCol);
+            if (inBounds(newPosition)) {
+                if(!isFriend(board.getPiece(newPosition)) || board.getPiece(newPosition) == null) {
+                    ChessMove move = new ChessMove(myPosition, newPosition, null);
+                    validMoves.add(move);
+                }
+            }
+        }
+        return validMoves;
+    }
 //    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
 //
 //    }
@@ -217,9 +235,9 @@ public class ChessPiece {
         if(board.getPiece(myPosition).getPieceType() == PieceType.KING) {
             return kingMoves(board, myPosition);
         }
-//        if(board.getPiece(myPosition).getPieceType() == PieceType.KNIGHT) {
-//            return knightMoves(board, myPosition);
-//        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.KNIGHT) {
+            return knightMoves(board, myPosition);
+        }
 //        if(board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
 //            return pawnMoves(board, myPosition);
 //        }
