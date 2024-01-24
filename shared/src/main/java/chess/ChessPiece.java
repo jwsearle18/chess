@@ -70,30 +70,32 @@ public class ChessPiece {
         return !isFriend(board.getPiece(position)) && inBounds(position);
     }
 
+    public void lineMover(ChessBoard board, ChessPosition position, HashSet<ChessMove> set, int row, int col) {
+        int newRow = position.getRow() + row;
+        int newCol = position.getColumn() + col;
 
+        ChessPosition newPosition = new ChessPosition(newRow, newCol);
 
-    public void mover(ChessBoard board, ChessPosition position, HashSet<ChessMove> set, int row, int col) {
+        while (inBounds(newPosition)) {
 
-        while (inBounds(position)) {
-            ChessPosition newPosition = new ChessPosition(row, col);//- change the rows and cols as specified
             if (isPossiblePosition(newPosition, board)) {
-                ChessMove newMove = new ChessMove(position, newPosition, null);//- in the new position, check if its a possible position.
+                ChessMove newMove = new ChessMove(position, newPosition, null);
                 set.add(newMove);
+
                 if(!isFriend(board.getPiece(newPosition))){
                     break;
                 }
             } else {
-                break;//- if it is, add it in the set
+                break;
             }
-            //          - if not friend break
-            //      - else break
-
+            newRow += row;
+            newCol += col;
         }
 
     }
 
 //    public ChessPosition singleDiagonalUpRight(ChessPosition position, HashSet<ChessMove> set) {
-//        ChessPosition newPosition = new ChessPosition(position.getRow() + 1,position.getColumn() + 1);
+//        ChessPosition newPosition = new ChessPosition(position.getRow() + 1, position.getColumn() + 1);
 //        ChessMove newMove = new ChessMove(position, newPosition, null);
 //        set.add(newMove);
 //        return newPosition;
@@ -152,18 +154,30 @@ public class ChessPiece {
     private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> diagonalMoves =  new HashSet<>();
 
-        for (ChessPosition i = myPosition; isPossiblePosition(i, board); i.getRow()++) {
-            mover(board, i, diagonalMoves, myPosition.getRow() + 1, myPosition.getColumn() + 1);
-        }
+            lineMover(board, myPosition, diagonalMoves, 1, 1);
+            lineMover(board, myPosition, diagonalMoves, -1, 1);
+            lineMover(board, myPosition, diagonalMoves, 1, -1);
+            lineMover(board, myPosition, diagonalMoves, -1, -1);
 
-
-        for (ChessPosition i = singleDiagonalUpRight(myPosition, diagonalMoves); isPossiblePosition(i, board); singleDiagonalUpRight(i, diagonalMoves)) {
-                if (board.getPiece(i) != null) {
-                break;
-            }
-        }
             return diagonalMoves;
         }
+
+    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+
 
  /*
  *  for i in possible positions
@@ -185,6 +199,21 @@ public class ChessPiece {
 
         if(board.getPiece(myPosition).getPieceType() == PieceType.BISHOP) {
             return bishopMoves(board, myPosition);
+        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.KING) {
+            return kingMoves(board, myPosition);
+        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.KNIGHT) {
+            return knightMoves(board, myPosition);
+        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
+            return pawnMoves(board, myPosition);
+        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.QUEEN) {
+            return queenMoves(board, myPosition);
+        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.ROOK) {
+            return rookMoves(board, myPosition);
         }
         return new ArrayList<>();
     }
