@@ -59,40 +59,36 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public boolean inBounds(ChessPosition position) {
-        return position.getRow() < 9 && position.getColumn() < 9 && position.getRow() > 0 && position.getColumn() > 0;
+        return position.getRow() >= 1 && position.getColumn() >= 1 && position.getRow() <= 8 && position.getColumn() <= 8;
     }
 
     public boolean isFriend(ChessPiece piece) {
         return piece != null && this.getTeamColor() == piece.getTeamColor();
     }
 
-    public boolean isPossiblePosition(ChessPosition position, ChessBoard board) {
-        return !isFriend(board.getPiece(position)) && inBounds(position);
-    }
-
-    public void lineMover(ChessBoard board, ChessPosition position, HashSet<ChessMove> set, int row, int col) {
-        int newRow = position.getRow() + row;
-        int newCol = position.getColumn() + col;
-
-        ChessPosition newPosition = new ChessPosition(newRow, newCol);
-
-        while (inBounds(newPosition)) {
-
-            if (isPossiblePosition(newPosition, board)) {
-                ChessMove newMove = new ChessMove(position, newPosition, null);
-                set.add(newMove);
-
-                if(!isFriend(board.getPiece(newPosition))){
-                    break;
-                }
-            } else {
-                break;
-            }
-            newRow += row;
-            newCol += col;
-        }
-
-    }
+//    public void lineMover(ChessBoard board, ChessPosition position, HashSet<ChessMove> set, int row, int col) {
+//        int newRow = position.getRow() + row;
+//        int newCol = position.getColumn() + col;
+//
+//        ChessPosition newPosition = new ChessPosition(newRow, newCol);
+//
+//        while (inBounds(newPosition)) {
+//
+//            if (isPossiblePosition(newPosition, board)) {
+//                ChessMove newMove = new ChessMove(position, newPosition, null);
+//                set.add(newMove);
+//
+//                if(!isFriend(board.getPiece(newPosition))){
+//                    break;
+//                }
+//            } else {
+//                break;
+//            }
+//            newRow += row;
+//            newCol += col;
+//        }
+//
+//    }
 
 //    public ChessPosition singleDiagonalUpRight(ChessPosition position, HashSet<ChessMove> set) {
 //        ChessPosition newPosition = new ChessPosition(position.getRow() + 1, position.getColumn() + 1);
@@ -151,32 +147,50 @@ public class ChessPiece {
 //    }
 
 
-    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
-        HashSet<ChessMove> diagonalMoves =  new HashSet<>();
+//    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+//        HashSet<ChessMove> diagonalMoves =  new HashSet<>();
+//
+//            lineMover(board, myPosition, diagonalMoves, 1, 1);
+//            lineMover(board, myPosition, diagonalMoves, -1, 1);
+//            lineMover(board, myPosition, diagonalMoves, 1, -1);
+//            lineMover(board, myPosition, diagonalMoves, -1, -1);
+//
+//            return diagonalMoves;
+//        }
 
-            lineMover(board, myPosition, diagonalMoves, 1, 1);
-            lineMover(board, myPosition, diagonalMoves, -1, 1);
-            lineMover(board, myPosition, diagonalMoves, 1, -1);
-            lineMover(board, myPosition, diagonalMoves, -1, -1);
-
-            return diagonalMoves;
-        }
-
-    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
-
-    }
-    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
-
-    }
+//    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+//
+//    }
+//    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+//
+//    }
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> validMoves = new HashSet<>();
 
-    }
-    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        int[][] directions = {
+                {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1}, {1,0}
+        };
 
-    }
-    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+        for(int[] direction : directions){
+            int newRow = myPosition.getRow() + direction[0];
+            int newCol = myPosition.getColumn() + direction[1];
 
+            ChessPosition newPosition = new ChessPosition(newRow, newCol);
+            if (inBounds(newPosition)) {
+                if(!isFriend(board.getPiece(newPosition)) || board.getPiece(newPosition) == null) {
+                    ChessMove move = new ChessMove(myPosition, newPosition, null);
+                    validMoves.add(move);
+                }
+            }
+        }
+        return validMoves;
     }
+//    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+//
+//    }
+//    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+//
+//    }
 
 
  /*
@@ -197,24 +211,24 @@ public class ChessPiece {
 */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-        if(board.getPiece(myPosition).getPieceType() == PieceType.BISHOP) {
-            return bishopMoves(board, myPosition);
-        }
+//        if(board.getPiece(myPosition).getPieceType() == PieceType.BISHOP) {
+//            return bishopMoves(board, myPosition);
+//        }
         if(board.getPiece(myPosition).getPieceType() == PieceType.KING) {
             return kingMoves(board, myPosition);
         }
-        if(board.getPiece(myPosition).getPieceType() == PieceType.KNIGHT) {
-            return knightMoves(board, myPosition);
-        }
-        if(board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
-            return pawnMoves(board, myPosition);
-        }
-        if(board.getPiece(myPosition).getPieceType() == PieceType.QUEEN) {
-            return queenMoves(board, myPosition);
-        }
-        if(board.getPiece(myPosition).getPieceType() == PieceType.ROOK) {
-            return rookMoves(board, myPosition);
-        }
+//        if(board.getPiece(myPosition).getPieceType() == PieceType.KNIGHT) {
+//            return knightMoves(board, myPosition);
+//        }
+//        if(board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
+//            return pawnMoves(board, myPosition);
+//        }
+//        if(board.getPiece(myPosition).getPieceType() == PieceType.QUEEN) {
+//            return queenMoves(board, myPosition);
+//        }
+//        if(board.getPiece(myPosition).getPieceType() == PieceType.ROOK) {
+//            return rookMoves(board, myPosition);
+//        }
         return new ArrayList<>();
     }
 
