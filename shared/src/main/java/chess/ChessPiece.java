@@ -463,14 +463,20 @@ public class ChessPiece {
             for (ChessPosition position : possiblePositions) {
                 if (inBounds(position)) {
                     if (board.getPiece(position) == null) {
-                        validMoves.add(new ChessMove(myPosition, position, null));
+                        if(position.getRow() == 8) {
+                            validMoves.add(new ChessMove(myPosition, position, PieceType.ROOK));
+                            validMoves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
+                            validMoves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
+                            validMoves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
+                        } else {
+                            validMoves.add(new ChessMove(myPosition, position, null));
+                        }
                     } else {
                         continue;
                     }
                 }
             }
         }
-
 
         if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.BLACK) {
             possiblePositions.add(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()));
@@ -488,7 +494,14 @@ public class ChessPiece {
             for (ChessPosition position : possiblePositions) {
                 if (inBounds(position)) {
                     if (board.getPiece(position) == null) {
-                        validMoves.add(new ChessMove(myPosition, position, null));
+                        if(position.getRow() == 1) {
+                            validMoves.add(new ChessMove(myPosition, position, PieceType.ROOK));
+                            validMoves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
+                            validMoves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
+                            validMoves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
+                        } else {
+                            validMoves.add(new ChessMove(myPosition, position, null));
+                        }
                     } else {
                         continue;
                     }
