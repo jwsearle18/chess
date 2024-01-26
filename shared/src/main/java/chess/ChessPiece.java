@@ -1,5 +1,6 @@
 package chess;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -444,11 +445,11 @@ public class ChessPiece {
 
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> validMoves = new HashSet<ChessMove>();
-        HashSet<ChessPosition> possiblePositions = new HashSet<ChessPosition>();
+        ArrayList<ChessPosition> possiblePositions = new ArrayList<ChessPosition>();
 
         if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
             possiblePositions.add(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()));
-            if (myPosition.getRow() == 2) {
+            if (myPosition.getRow() == 2 && board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn())) == null) {
                 possiblePositions.add(new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn()));
             }
             ChessPosition topRightPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
@@ -473,7 +474,7 @@ public class ChessPiece {
 
         if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.BLACK) {
             possiblePositions.add(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()));
-            if (myPosition.getRow() == 7) {
+            if (myPosition.getRow() == 7 && board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn())) == null) {
                 possiblePositions.add(new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn()));
             }
             ChessPosition bottomRightPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
