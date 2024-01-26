@@ -59,6 +59,22 @@ public class ChessPiece {
         return position.getRow() >= 1 && position.getColumn() >= 1 && position.getRow() <= 8 && position.getColumn() <= 8;
     }
 
+    public boolean isEnemy(ChessPiece piece) {
+        return this.getTeamColor() == piece.getTeamColor();
+    }
+
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+
+    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
+
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> validMoves = new HashSet<>();
         List<List<Integer>> directions = new ArrayList<>();
@@ -115,7 +131,13 @@ public class ChessPiece {
         return validMoves;
     }
 
+    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
 
+    }
+
+    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+
+    }
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
         if(board.getPiece(myPosition).getPieceType() == PieceType.BISHOP) {
@@ -127,15 +149,15 @@ public class ChessPiece {
         if(board.getPiece(myPosition).getPieceType() == PieceType.KNIGHT) {
             return knightMoves(board, myPosition);
         }
-        if(board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
-            return pawnMoves(board, myPosition);
+//        if(board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
+//            return pawnMoves(board, myPosition);
+//        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.QUEEN) {
+            return queenMoves(board, myPosition);
         }
-//        if(board.getPiece(myPosition).getPieceType() == PieceType.QUEEN) {
-//            return queenMoves(board, myPosition);
-//        }
-//        if(board.getPiece(myPosition).getPieceType() == PieceType.ROOK) {
-//            return rookMoves(board, myPosition);
-//        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.ROOK) {
+            return rookMoves(board, myPosition);
+        }
         return new ArrayList<>();
     }
 
