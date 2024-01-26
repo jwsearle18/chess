@@ -455,7 +455,7 @@ public class ChessPiece {
             if (isEnemy(board.getPiece(topRightPosition))) {
                 validMoves.add(new ChessMove(myPosition, topRightPosition, null));
             }
-            ChessPosition topLeftPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
+            ChessPosition topLeftPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
             if (isEnemy(board.getPiece(topLeftPosition))) {
                 validMoves.add(new ChessMove(myPosition, topLeftPosition, null));
             }
@@ -463,8 +463,6 @@ public class ChessPiece {
                 if (inBounds(position)) {
                     if (board.getPiece(position) == null) {
                         validMoves.add(new ChessMove(myPosition, position, null));
-                    } else if (isEnemy(board.getPiece(position))) {
-                        continue;
                     } else {
                         continue;
                     }
@@ -490,8 +488,6 @@ public class ChessPiece {
                 if (inBounds(position)) {
                     if (board.getPiece(position) == null) {
                         validMoves.add(new ChessMove(myPosition, position, null));
-                    } else if (isEnemy(board.getPiece(position))) {
-                        continue;
                     } else {
                         continue;
                     }
