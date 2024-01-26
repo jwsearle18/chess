@@ -111,6 +111,54 @@ public class ChessPiece {
         possiblePositions.add(new ChessPosition(myPosition.getRow()+8,myPosition.getColumn()-8));
         return possiblePositions;
     }
+    Collection<ChessPosition> right(ChessPosition myPosition) {
+        ArrayList<ChessPosition> possiblePositions = new ArrayList<ChessPosition>();
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()+1));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()+2));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()+3));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()+4));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()+5));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()+6));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()+7));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()+8));
+        return possiblePositions;
+    }
+    Collection<ChessPosition> down(ChessPosition myPosition) {
+        ArrayList<ChessPosition> possiblePositions = new ArrayList<ChessPosition>();
+        possiblePositions.add(new ChessPosition(myPosition.getRow()-1,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()-2,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()-3,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()-4,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()-5,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()-6,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()-7,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()-8,myPosition.getColumn()));
+        return possiblePositions;
+    }
+    Collection<ChessPosition> left(ChessPosition myPosition) {
+        ArrayList<ChessPosition> possiblePositions = new ArrayList<ChessPosition>();
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()-1));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()-2));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()-3));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()-4));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()-5));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()-6));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()-7));
+        possiblePositions.add(new ChessPosition(myPosition.getRow(),myPosition.getColumn()-8));
+        return possiblePositions;
+    }
+    Collection<ChessPosition> up(ChessPosition myPosition) {
+        ArrayList<ChessPosition> possiblePositions = new ArrayList<ChessPosition>();
+        possiblePositions.add(new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()+3,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()+4,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()+5,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()+6,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()+7,myPosition.getColumn()));
+        possiblePositions.add(new ChessPosition(myPosition.getRow()+8,myPosition.getColumn()));
+        return possiblePositions;
+    }
 
     private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> validMoves = new HashSet<>();
@@ -226,6 +274,174 @@ public class ChessPiece {
         return validMoves;
     }
 
+    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> validMoves = new HashSet<>();
+        ArrayList<ChessPosition> possiblePositions1 = new ArrayList<>(up(myPosition));
+        ArrayList<ChessPosition> possiblePositions2 = new ArrayList<>(down(myPosition));
+        ArrayList<ChessPosition> possiblePositions3 = new ArrayList<>(left(myPosition));
+        ArrayList<ChessPosition> possiblePositions4 = new ArrayList<>(right(myPosition));
+        ArrayList<ChessPosition> possiblePositions5 = new ArrayList<>(upRight(myPosition));
+        ArrayList<ChessPosition> possiblePositions6 = new ArrayList<>(downRight(myPosition));
+        ArrayList<ChessPosition> possiblePositions7 = new ArrayList<>(downLeft(myPosition));
+        ArrayList<ChessPosition> possiblePositions8 = new ArrayList<>(upLeft(myPosition));
+
+        for(ChessPosition position : possiblePositions1) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions2) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions3) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions4) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions5) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions6) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions7) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions8) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        return validMoves;
+    }
+
+    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> validMoves = new HashSet<>();
+        ArrayList<ChessPosition> possiblePositions1 = new ArrayList<>(up(myPosition));
+        ArrayList<ChessPosition> possiblePositions2 = new ArrayList<>(down(myPosition));
+        ArrayList<ChessPosition> possiblePositions3 = new ArrayList<>(left(myPosition));
+        ArrayList<ChessPosition> possiblePositions4 = new ArrayList<>(right(myPosition));
+
+        for(ChessPosition position : possiblePositions1) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions2) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions3) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for(ChessPosition position : possiblePositions4) {
+            if(inBounds(position)) {
+                if(board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else if(isEnemy(board.getPiece(position))) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        return validMoves;
+    }
+
 //    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
 //        HashSet<ChessMove> validMoves = new HashSet<>();
 //        List<List<Integer>> directions = new ArrayList<>();
@@ -303,12 +519,12 @@ public class ChessPiece {
 //        if(board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
 //            return pawnMoves(board, myPosition);
 //        }
-//        if(board.getPiece(myPosition).getPieceType() == PieceType.QUEEN) {
-//            return queenMoves(board, myPosition);
-//        }
-//        if(board.getPiece(myPosition).getPieceType() == PieceType.ROOK) {
-//            return rookMoves(board, myPosition);
-//        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.QUEEN) {
+            return queenMoves(board, myPosition);
+        }
+        if(board.getPiece(myPosition).getPieceType() == PieceType.ROOK) {
+            return rookMoves(board, myPosition);
+        }
         return new ArrayList<>();
     }
 
