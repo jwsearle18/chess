@@ -447,7 +447,7 @@ public class ChessPiece {
         HashSet<ChessMove> validMoves = new HashSet<ChessMove>();
         ArrayList<ChessPosition> possiblePositions = new ArrayList<ChessPosition>();
 
-        if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
+        if (this.getTeamColor() == ChessGame.TeamColor.WHITE) {
             possiblePositions.add(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()));
             if (myPosition.getRow() == 2 && board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn())) == null) {
                 possiblePositions.add(new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn()));
