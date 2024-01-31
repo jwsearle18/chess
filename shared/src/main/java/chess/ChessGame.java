@@ -11,15 +11,17 @@ import java.util.HashSet;
  */
 public class ChessGame {
 
+    private ChessBoard board;
+    private TeamColor team;
     public ChessGame() {
-
+        team = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return team;
     }
 
     /**
@@ -28,7 +30,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        this.team = team;
     }
 
     /**
@@ -102,7 +104,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -111,6 +113,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return this.board;
     }
 }
