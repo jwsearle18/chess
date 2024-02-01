@@ -47,7 +47,7 @@ public class ChessGame {
         for(int row = 1; row < 9; row++) {
             for(int col = 1; col < 9; col++) {
                 ChessPiece piece = board[row][col];
-                if(piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
                     return new ChessPosition(row, col);
                 }
             }
@@ -109,6 +109,13 @@ public class ChessGame {
         return false;
     }
 
+    private Collection<ChessPosition> getEndPositions(ChessPosition startPosition) {
+        HashSet<ChessPosition> endPositions = new HashSet<ChessPosition>();
+        for(ChessMove move : validMoves(startPosition) {
+            endPositions.add(move.endPosition);
+        }
+    }
+
     /**
      * Determines if the given team is in checkmate
      *
@@ -116,7 +123,29 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for(int row = 1; row < 9; row++) {
+            for(int col = 1; col < 9; col++) {
+                ChessPiece piece = board[row][col];
+                if(piece != null) {
+                    if(piece.getTeamColor() != teamColor){
+                        for(ChessMove move : validMoves(new ChessPosition(row, col))) {
+                            for(ChessPosition position : getEndPositions(kingPosition(board, teamColor))) {
+                                int counter =0;
+                                if(move.endPosition == kingPosition(board, teamColor) && move.endPosition == position) {
+                                    counter += 1;
+                                    if(counter == 6){
+                                        return true;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            }
+        }
+        return false;
     }
 
     /**
