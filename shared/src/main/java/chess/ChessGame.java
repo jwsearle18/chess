@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -14,7 +15,8 @@ public class ChessGame {
     private ChessBoard board;
     private TeamColor team;
     public ChessGame() {
-        team = TeamColor.WHITE;
+        setTeamTurn(team);
+        setBoard(board);
     }
 
     /**
@@ -40,6 +42,19 @@ public class ChessGame {
         WHITE,
         BLACK
     }
+
+    private ChessPosition kingPosition(ChessBoard board, TeamColor teamColor) {
+        for(int row = 1; row < 9; row++) {
+            for(int col = 1; col < 9; col++) {
+                ChessPiece piece = board[row][col];
+                if(piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                    return new ChessPosition(row, col);
+                }
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Gets a valid moves for a piece at the given location
@@ -73,8 +88,25 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
+
+
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for(int row = 1; row < 9; row++) {
+            for(int col = 1; col < 9; col++) {
+                ChessPiece piece = board[row][col];
+                if(piece != null) {
+                    if(piece.getTeamColor() != teamColor){
+                        for(ChessMove move : validMoves(new ChessPosition(row, col))) {
+                            if(move.endPosition == kingPosition(board, teamColor)) {
+                                return true;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        return false;
     }
 
     /**
