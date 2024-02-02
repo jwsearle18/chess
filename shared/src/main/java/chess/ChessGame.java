@@ -130,10 +130,10 @@ public class ChessGame {
                     if(piece.getTeamColor() != teamColor){
                         for(ChessMove move : validMoves(new ChessPosition(row, col))) {
                             for(ChessPosition position : getEndPositions(kingPosition(board, teamColor))) {
-                                int counter =0;
+                                int counter = 0;
                                 if(move.endPosition == kingPosition(board, teamColor) && move.endPosition == position) {
                                     counter += 1;
-                                    if(counter == 6){
+                                    if(counter == 9){
                                         return true;
                                     }
                                 }
