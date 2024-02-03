@@ -64,17 +64,17 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPiece piece = getBoard().getPiece(startPosition);
-        HashSet<ChessMove> validMoves = new HashSet<>();
-        if (piece == null) {
-            return null;
-        } else {
-            for(ChessMove move : piece.pieceMoves(getBoard(), startPosition)) {
-                ChessBoard newBoard = getBoard();
-                newBoard
-            }
-
-        }
+//        ChessPiece piece = getBoard().getPiece(startPosition);
+//        HashSet<ChessMove> validMoves = new HashSet<>();
+//        if (piece == null) {
+//            return null;
+//        } else {
+//            for(ChessMove move : piece.pieceMoves(getBoard(), startPosition)) {
+//                ChessBoard newBoard = getBoard();
+//                newBoard
+//            }
+//
+//        }
         throw new RuntimeException("Not implemented");
     }
 
