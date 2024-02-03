@@ -19,6 +19,11 @@ public class ChessGame {
         setBoard(board);
     }
 
+    public ChessGame(ChessGame other) {
+        this.team = other.team;
+        this.board = other.board;
+    }
+
     /**
      * @return Which team's turn it is
      */
@@ -56,6 +61,8 @@ public class ChessGame {
     }
 
 
+
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -64,18 +71,23 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-//        ChessPiece piece = getBoard().getPiece(startPosition);
-//        HashSet<ChessMove> validMoves = new HashSet<>();
-//        if (piece == null) {
-//            return null;
-//        } else {
-//            for(ChessMove move : piece.pieceMoves(getBoard(), startPosition)) {
-//                ChessBoard newBoard = getBoard();
-//                newBoard
-//            }
-//
-//        }
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = getBoard().getPiece(startPosition);
+        HashSet<ChessMove> validMoves = new HashSet<>();
+        if (piece == null) {
+            return null;
+        } else {
+            for(ChessMove move : piece.pieceMoves(getBoard(), startPosition)) {
+                ChessGame currentGame = new ChessGame();
+                ChessGame gameCopy = new ChessGame(currentGame);
+                gameCopy.getBoard().addPiece(move.endPosition, piece);
+                gameCopy.getBoard().addPiece(move.startPosition, null);
+                if(!isInCheck(piece.getTeamColor())) {
+                    validMoves.add(move);
+                }
+            }
+        }
+        return validMoves;
+//        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -124,6 +136,11 @@ public class ChessGame {
         return false;
     }
 
+//    Collection<ChessMove> getEndPositions(ChessPosition position) {
+//        HashSet<ChessMove> positions = new HashSet<>();
+//
+//    }
+
 
     /**
      * Determines if the given team is in checkmate
@@ -137,20 +154,18 @@ public class ChessGame {
 //                ChessPiece piece = getBoard().getPiece(new ChessPosition(row,col));
 //                if(piece != null) {
 //                    if(piece.getTeamColor() != teamColor){
-//                        for(ChessMove move : validMoves(new ChessPosition(row, col))) {
+//                        for(ChessMove move : piece.pieceMoves(getBoard(), new ChessPosition(row, col))) {
 //                            for(ChessPosition position : getEndPositions(kingPosition(board, teamColor))) {
 //                                int counter = 0;
-//                                if(move.endPosition == kingPosition(board, teamColor) && move.endPosition == position) {
+//                                if(move.endPosition == kingPosition(getBoard(), teamColor) && move.endPosition == position) {
 //                                    counter += 1;
 //                                    if(counter == 9){
 //                                        return true;
 //                                    }
 //                                }
 //                            }
-//
 //                        }
 //                    }
-//
 //                }
 //            }
 //        }
@@ -186,4 +201,7 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return this.board;
     }
+
 }
+
+

@@ -21,6 +21,7 @@ public class ChessPiece {
 
     }
 
+
     /**
      * The various different chess piece options
      */
