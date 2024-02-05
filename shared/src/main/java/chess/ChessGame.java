@@ -82,7 +82,7 @@ public class ChessGame {
         ChessPiece piece = getBoard().getPiece(startPosition);
         HashSet<ChessMove> validMoves = new HashSet<>();
         if (piece == null) {
-            return null;
+            //Do Nothing
         } else {
             for(ChessMove move : piece.pieceMoves(getBoard(), startPosition)) {
                 ChessBoard copiedBoard = copyBoard(board);
@@ -108,8 +108,13 @@ public class ChessGame {
         if(piece != null) {
             if(piece.getTeamColor().equals(this.team)) {
                 if(validMoves(move.startPosition).contains(move)) {
-                    getBoard().addPiece(move.endPosition, piece);
-                    getBoard().addPiece(move.startPosition, null);
+                    if(move.promotionPiece != null) {
+                        getBoard().addPiece(move.endPosition, new ChessPiece(piece.getTeamColor(), move.promotionPiece));
+                        getBoard().addPiece(move.startPosition, null);
+                    } else {
+                        getBoard().addPiece(move.endPosition, piece);
+                        getBoard().addPiece(move.startPosition, null);
+                    }
                 }
             }
         }
@@ -121,6 +126,25 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
+
+    public boolean copyBoardInCheck(TeamColor teamColor, ChessBoard copiedBoard) {
+        for(int row = 1; row < 9; row++) {
+            for(int col = 1; col < 9; col++) {
+                ChessPiece piece = copiedBoard.getPiece(new ChessPosition(row,col));
+                if(piece != null) {
+                    if(piece.getTeamColor() != teamColor){
+                        for(ChessMove move : piece.pieceMoves(copiedBoard, new ChessPosition(row, col))) {
+                            ChessPosition tempKing = kingPosition(teamColor);
+                            if(move.endPosition.equals(tempKing)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
 
     public boolean isInCheck(TeamColor teamColor) {
@@ -155,28 +179,29 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-//        for(int row = 1; row < 9; row++) {
-//            for(int col = 1; col < 9; col++) {
-//                ChessPiece piece = getBoard().getPiece(new ChessPosition(row,col));
-//                if(piece != null) {
-//                    if(piece.getTeamColor() != teamColor){
-//                        for(ChessMove move : piece.pieceMoves(getBoard(), new ChessPosition(row, col))) {
-//                            for(ChessPosition position : getEndPositions(kingPosition(board, teamColor))) {
-//                                int counter = 0;
-//                                if(move.endPosition == kingPosition(getBoard(), teamColor) && move.endPosition == position) {
-//                                    counter += 1;
-//                                    if(counter == 9){
-//                                        return true;
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return false;
-        throw new RuntimeException("Not implemented");
+        if(isInCheck(teamColor)) {
+            for (int row = 1; row < 9; row++) {
+                for (int col = 1; col < 9; col++) {
+                    ChessPiece piece = getBoard().getPiece(new ChessPosition(row, col));
+                    if (piece != null) {
+                        if (piece.getTeamColor() == teamColor) {
+                            for (ChessMove move : validMoves(new ChessPosition(row, col))) {
+
+                                ChessBoard copiedBoard = copyBoard(getBoard());
+                                copiedBoard.addPiece(move.endPosition, piece);
+                                copiedBoard.addPiece(move.startPosition, null);
+
+                                if (!copyBoardInCheck(teamColor, copiedBoard)) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
