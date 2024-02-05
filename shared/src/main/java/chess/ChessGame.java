@@ -59,11 +59,11 @@ public class ChessGame {
 
     public ChessBoard copyBoard(ChessBoard board) {
         ChessPiece[][] copiedBoard = new ChessPiece[8][8];
-        for(int row = 0; row < 8; row++) {
-            for(int col = 0; col < 8; col++) {
+        for(int row = 1; row < 9; row++) {
+            for(int col = 1; col < 9; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
-                copiedBoard[row][col] = piece;
+                copiedBoard[row-1][col-1] = piece;
             }
         }
         return new ChessBoard(copiedBoard);
