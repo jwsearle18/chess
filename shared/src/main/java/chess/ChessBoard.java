@@ -12,10 +12,15 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    public final ChessPiece [][] squares = new ChessPiece[8][8];
+    public ChessPiece [][] squares = new ChessPiece[8][8];
     public ChessBoard() {
-        
+
     }
+
+    public ChessBoard(ChessPiece[][] copiedBoard) {
+        this.squares = copiedBoard;
+    }
+
 
     /**
      * Adds a chess piece to the chessboard
