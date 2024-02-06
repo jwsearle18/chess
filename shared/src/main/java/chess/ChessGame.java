@@ -101,21 +101,17 @@ public class ChessGame {
         public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
         HashSet<ChessMove> validMoves = new HashSet<>();
-        if (piece.getTeamColor() != team) {
-            return validMoves;
-        }
-        if (piece != null) {
+            if (piece != null) {
+
             for(ChessMove move : piece.pieceMoves(board, startPosition)) {
-                if(piece.getPieceType() == ChessPiece.PieceType.KING) {
-                    ChessBoard kingMoveChessBoard = copyBoard(board);
-                    kingMoveChessBoard.addPiece(move.endPosition, piece);
-                    kingMoveChessBoard.addPiece(move.startPosition, null);
-                    if(!copyBoardInCheck(piece.getTeamColor(), kingMoveChessBoard)){
+
+                    ChessBoard difChessBoard = copyBoard(board);
+                    difChessBoard.addPiece(move.endPosition, piece);
+                    difChessBoard.addPiece(move.startPosition, null);
+                    if(!copyBoardInCheck(piece.getTeamColor(), difChessBoard)){
                         validMoves.add(move);
                     }
-                } else if(!isInCheck(piece.getTeamColor())) {
-                    validMoves.add(move);
-                }
+
             }
         }
         return validMoves;
@@ -248,7 +244,7 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         if(!isInCheck(teamColor)) {
-            boolean noValidMoves = true;
+
             for (int row = 1; row < 9; row++) {
                 for (int col = 1; col < 9; col++) {
                     ChessPiece piece = board.getPiece(new ChessPosition(row, col));
@@ -258,13 +254,13 @@ public class ChessGame {
                             copiedBoard.addPiece(move.endPosition, piece);
                             copiedBoard.addPiece(move.startPosition, null);
                             if (!copyBoardInCheck(teamColor, copiedBoard)) {
-                                noValidMoves = false;
+                                return false;
                             }
                         }
                     }
                 }
             }
-            return noValidMoves;
+            return true;
         }
         return false;
     }
