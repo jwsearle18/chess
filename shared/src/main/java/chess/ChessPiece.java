@@ -454,25 +454,29 @@ public class ChessPiece {
                 possiblePositions.add(new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn()));
             }
             ChessPosition topRightPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
-            if (isEnemy(board.getPiece(topRightPosition))) {
-                if(topRightPosition.getRow() == 1) {
-                    validMoves.add(new ChessMove(myPosition, topRightPosition, PieceType.ROOK));
-                    validMoves.add(new ChessMove(myPosition, topRightPosition, PieceType.QUEEN));
-                    validMoves.add(new ChessMove(myPosition, topRightPosition, PieceType.BISHOP));
-                    validMoves.add(new ChessMove(myPosition, topRightPosition, PieceType.KNIGHT));
-                } else {
-                    validMoves.add(new ChessMove(myPosition, topRightPosition, null));
+            if(inBounds(topRightPosition)) {
+                if (isEnemy(board.getPiece(topRightPosition))) {
+                    if (topRightPosition.getRow() == 1) {
+                        validMoves.add(new ChessMove(myPosition, topRightPosition, PieceType.ROOK));
+                        validMoves.add(new ChessMove(myPosition, topRightPosition, PieceType.QUEEN));
+                        validMoves.add(new ChessMove(myPosition, topRightPosition, PieceType.BISHOP));
+                        validMoves.add(new ChessMove(myPosition, topRightPosition, PieceType.KNIGHT));
+                    } else {
+                        validMoves.add(new ChessMove(myPosition, topRightPosition, null));
+                    }
                 }
             }
             ChessPosition topLeftPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
-            if (isEnemy(board.getPiece(topLeftPosition))) {
-                if(topLeftPosition.getRow() == 1) {
-                    validMoves.add(new ChessMove(myPosition, topLeftPosition, PieceType.ROOK));
-                    validMoves.add(new ChessMove(myPosition, topLeftPosition, PieceType.QUEEN));
-                    validMoves.add(new ChessMove(myPosition, topLeftPosition, PieceType.BISHOP));
-                    validMoves.add(new ChessMove(myPosition, topLeftPosition, PieceType.KNIGHT));
-                } else {
-                    validMoves.add(new ChessMove(myPosition, topLeftPosition, null));
+            if(inBounds(topLeftPosition)) {
+                if (isEnemy(board.getPiece(topLeftPosition))) {
+                    if (topLeftPosition.getRow() == 1) {
+                        validMoves.add(new ChessMove(myPosition, topLeftPosition, PieceType.ROOK));
+                        validMoves.add(new ChessMove(myPosition, topLeftPosition, PieceType.QUEEN));
+                        validMoves.add(new ChessMove(myPosition, topLeftPosition, PieceType.BISHOP));
+                        validMoves.add(new ChessMove(myPosition, topLeftPosition, PieceType.KNIGHT));
+                    } else {
+                        validMoves.add(new ChessMove(myPosition, topLeftPosition, null));
+                    }
                 }
             }
             for (ChessPosition position : possiblePositions) {
@@ -499,25 +503,29 @@ public class ChessPiece {
                 possiblePositions.add(new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn()));
             }
             ChessPosition bottomRightPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
-            if (isEnemy(board.getPiece(bottomRightPosition))) {
-                if(bottomRightPosition.getRow() == 1) {
-                    validMoves.add(new ChessMove(myPosition, bottomRightPosition, PieceType.ROOK));
-                    validMoves.add(new ChessMove(myPosition, bottomRightPosition, PieceType.QUEEN));
-                    validMoves.add(new ChessMove(myPosition, bottomRightPosition, PieceType.BISHOP));
-                    validMoves.add(new ChessMove(myPosition, bottomRightPosition, PieceType.KNIGHT));
-                } else {
-                    validMoves.add(new ChessMove(myPosition, bottomRightPosition, null));
+            if(inBounds(bottomRightPosition)) {
+                if (isEnemy(board.getPiece(bottomRightPosition))) {
+                    if (bottomRightPosition.getRow() == 1) {
+                        validMoves.add(new ChessMove(myPosition, bottomRightPosition, PieceType.ROOK));
+                        validMoves.add(new ChessMove(myPosition, bottomRightPosition, PieceType.QUEEN));
+                        validMoves.add(new ChessMove(myPosition, bottomRightPosition, PieceType.BISHOP));
+                        validMoves.add(new ChessMove(myPosition, bottomRightPosition, PieceType.KNIGHT));
+                    } else {
+                        validMoves.add(new ChessMove(myPosition, bottomRightPosition, null));
+                    }
                 }
             }
             ChessPosition bottomLeftPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
-            if (isEnemy(board.getPiece(bottomLeftPosition))) {
-                if(bottomLeftPosition.getRow() == 1) {
-                    validMoves.add(new ChessMove(myPosition, bottomLeftPosition, PieceType.ROOK));
-                    validMoves.add(new ChessMove(myPosition, bottomLeftPosition, PieceType.QUEEN));
-                    validMoves.add(new ChessMove(myPosition, bottomLeftPosition, PieceType.BISHOP));
-                    validMoves.add(new ChessMove(myPosition, bottomLeftPosition, PieceType.KNIGHT));
-                } else {
-                    validMoves.add(new ChessMove(myPosition, bottomLeftPosition, null));
+            if(inBounds(bottomLeftPosition)) {
+                if (isEnemy(board.getPiece(bottomLeftPosition))) {
+                    if (bottomLeftPosition.getRow() == 1) {
+                        validMoves.add(new ChessMove(myPosition, bottomLeftPosition, PieceType.ROOK));
+                        validMoves.add(new ChessMove(myPosition, bottomLeftPosition, PieceType.QUEEN));
+                        validMoves.add(new ChessMove(myPosition, bottomLeftPosition, PieceType.BISHOP));
+                        validMoves.add(new ChessMove(myPosition, bottomLeftPosition, PieceType.KNIGHT));
+                    } else {
+                        validMoves.add(new ChessMove(myPosition, bottomLeftPosition, null));
+                    }
                 }
             }
             for (ChessPosition position : possiblePositions) {
