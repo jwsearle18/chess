@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -82,41 +81,25 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-//    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-//        ChessPiece piece = getBoard().getPiece(startPosition);
-//        HashSet<ChessMove> validMoves = new HashSet<>();
-//        if (piece == null) {
-//            return validMoves;
-//        } else {
-//            for(ChessMove move : piece.pieceMoves(getBoard(), startPosition)) {
-//                    if(!isInCheck(piece.getTeamColor())) {
-//                        validMoves.add(move);
-//                }
-//            }
-//        }
-//        return validMoves;
-////        throw new RuntimeException("Not implemented");
-//    }
-
         public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
         HashSet<ChessMove> validMoves = new HashSet<>();
             if (piece != null) {
 
-            for(ChessMove move : piece.pieceMoves(board, startPosition)) {
+
+                for (ChessMove move : piece.pieceMoves(board, startPosition)) {
 
                     ChessBoard difChessBoard = copyBoard(board);
                     difChessBoard.addPiece(move.endPosition, piece);
                     difChessBoard.addPiece(move.startPosition, null);
-                    if(!copyBoardInCheck(piece.getTeamColor(), difChessBoard)){
+                    if (!copyBoardInCheck(piece.getTeamColor(), difChessBoard)) {
                         validMoves.add(move);
                     }
+                }
 
-            }
-        }
+           }
         return validMoves;
-//        throw new RuntimeException("Not implemented");
-    }
+        }
 
     /**
      * Makes a move in a chess game
@@ -146,12 +129,11 @@ public class ChessGame {
                 }
             }
         }
-
+    }
         // if piece is null
         // if its not the turn of piece trying to move
         // if move trying to make is not returned by valid moves
-//        throw new InvalidMoveException("Invalid Move");
-    }
+
 
     /**
      * Determines if the given team is in check
@@ -198,11 +180,6 @@ public class ChessGame {
         }
         return false;
     }
-
-//    Collection<ChessMove> getEndPositions(ChessPosition position) {
-//        HashSet<ChessMove> positions = new HashSet<>();
-//
-//    }
 
 
     /**
