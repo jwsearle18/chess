@@ -51,6 +51,25 @@ Here is the documentation: [String Javadocs](https://docs.oracle.com/en/java/jav
 - import java.util.Collection;
 - public class BishopMovesCalculator{
   - public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) { return
-### 1/24
-###### Deep Copy v. Shallow Copy
-- copy the objects and all objects it references, recursively.
+### 2/7
+
+- Convert input stream to reader -> Reader InputStreamReader(is)
+- Convert Output stream to writer -> Writer OutputStreamWriter(os)
+
+- File Class
+- Scanner Class
+Need try catch that handles io exceptions, because with these it will likely throw io exceptions
+
+- GSON, library for processing JSON data.
+- make a JsonParser, pretty much a tokenizer.  Efficient way to grab specific thing in file.  not if you want the whole thing
+  - goes through each thing, which is either start object/end object, start/end Array, string, number, null, etc.
+  - token = event
+- if you want the whole thing, DOM parser, tree parser
+- What we'll actually use
+  - Object Serialization
+    - hand java object to the serializer, converts it to JSON
+    - create a Gson object
+      - Gson gson = new GsonBuilder().setPrettyPrinting().create();
+      - generator > JsonSimpleObjectSerializationExample
+  - Object Deserialization
+    - parser > JsonSimpleObjectDeserializationExample
