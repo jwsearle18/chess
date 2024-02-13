@@ -86,7 +86,6 @@ public class ChessGame {
         HashSet<ChessMove> validMoves = new HashSet<>();
             if (piece != null) {
 
-
                 for (ChessMove move : piece.pieceMoves(board, startPosition)) {
 
                     ChessBoard difChessBoard = copyBoard(board);
