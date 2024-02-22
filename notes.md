@@ -84,3 +84,6 @@ Need try catch that handles io exceptions, because with these it will likely thr
 - types of requests
   - GET, POST, PUSH, DELETE
 
+### HTTP
+ - 
+
