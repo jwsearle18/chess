@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class MemoryUserDAO implements UserDAO {
     static final private HashMap<String, UserData> users = new HashMap<>();
 
-    public static void clear() throws DataAccessException{
+    public void clear() throws DataAccessException{
         users.clear();
     }
 

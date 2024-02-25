@@ -9,11 +9,13 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import requests.LoginRequest;
+import requests.LogoutRequest;
 import requests.RegisterRequest;
 import results.RegisterResult;
 import service.*;
 import spark.*;
 
+import javax.xml.crypto.Data;
 import java.nio.file.Paths;
 
 public class Server {
@@ -78,7 +80,22 @@ public class Server {
         }
     }
 
-
+    private Object logout(Request req, Response res) {
+        LogoutService logout = new LogoutService();
+        Gson gson = new Gson();
+        LogoutRequest logoutRequest = gson.fromJson(req.headers("Authorization"), LogoutRequest.class);
+        try {
+            res.status(200);
+            logout.logout(logoutRequest);
+            return "";
+        } catch (DataAccessException e) {
+            res.status(500);
+            return "{ \"message\": \"Error: description\" }";
+        } catch (F401 f) {
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -93,6 +110,8 @@ public class Server {
         Spark.post("/user", this::register);
 
         Spark.post("/session", this::login);
+
+        Spark.delete("/session", this::logout);
 
 
         // Register your endpoints and handle exceptions here.

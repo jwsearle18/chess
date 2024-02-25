@@ -1,14 +1,17 @@
 package service;
 
-import dataAccess.DataAccessException;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.MemoryUserDAO;
+import com.google.gson.internal.LinkedTreeMap;
+import dataAccess.*;
+import org.eclipse.jetty.server.Authentication;
 
 public class ClearService {
     public static void clear() throws DataAccessException {
-        MemoryAuthDAO.clear();
-        MemoryUserDAO.clear();
-        MemoryGameDAO.clear();
+        AuthDAO authDAO = new MemoryAuthDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
+
+        authDAO.clear();
+        userDAO.clear();
+        gameDAO.clear();
     }
 }
