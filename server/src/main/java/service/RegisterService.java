@@ -13,8 +13,6 @@ public class RegisterService {
         UserDAO userDAO = new MemoryUserDAO();
         AuthDAO authDAO = new MemoryAuthDAO();
 
-        //since this is register, don't worry about verifying that the user is authenticated (you will have to do tha tin the login)
-        //put the authdata into your hashmap in authDAO
         if(user.username() == null || user.password() == null || user.email() == null) {
 
             throw new F400("Error: bad request");

@@ -1,12 +1,14 @@
 package server;
 
 import Failures.F400;
+import Failures.F401;
 import Failures.F403;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import requests.LoginRequest;
 import requests.RegisterRequest;
 import results.RegisterResult;
 import service.*;
@@ -57,7 +59,23 @@ public class Server {
             res.status(403);
             return "{ \"message\": \"Error: already taken\" }";
         }
+    }
 
+    private Object login(Request req, Response res) {
+        LoginService login = new LoginService();
+        Gson gson = new Gson();
+        LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
+        try {
+            res.status(200);
+            AuthData result = login.login(loginRequest);
+            return gson.toJson(result);
+        } catch (DataAccessException e) {
+            res.status(500);
+            return "{ \"message\": \"Error: description\" }";
+        } catch (F401 f) {
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
     }
 
 
@@ -73,6 +91,8 @@ public class Server {
         Spark.delete("/db", this::clear);
 
         Spark.post("/user", this::register);
+
+        Spark.post("/session", this::login);
 
 
         // Register your endpoints and handle exceptions here.
