@@ -1,8 +1,15 @@
 package server;
 
+import Failures.F400;
+import Failures.F403;
 import com.google.gson.Gson;
+import dataAccess.*;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
 import requests.RegisterRequest;
 import results.RegisterResult;
+import service.*;
 import spark.*;
 
 import java.nio.file.Paths;
@@ -16,26 +23,41 @@ public class Server {
     }
 
     private Object clear(Request req, Response res) {
-        res.status(500);
-        return "{ \"message\": \"Error: description\" }";
+
+        try {
+            ClearService.clear();
+            res.status(200);
+            return "";
+        }
+
+        catch(DataAccessException E) {
+            res.status(500);
+            return "{ \"message\": \"Error: description\" }";
+        }
     }
-
+//    private Object logout(Request req, Response res) {
+//        String authToken = req.headers("Authorization");
+//    }
     private Object register(Request req, Response res) {
-        System.out.println(req.body());
+//        System.out.println(req.body());
+        RegisterService register = new RegisterService();
         Gson gson = new Gson();
-        RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
+        UserData userData = gson.fromJson(req.body(), UserData.class);
+        try {
+            res.status(200);
+            AuthData result = register.register(userData);
+            return gson.toJson(result);
+        } catch (DataAccessException e){
+            res.status(500);
+            return "{ \"message\": \"Error: description\" }";
+        } catch (F400 f){
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        } catch (F403 e) {
+            res.status(403);
+            return "{ \"message\": \"Error: already taken\" }";
+        }
 
-        //call service to do registration
-        //RegisterResult result = service.register(request);
-
-        RegisterResult result = new RegisterResult();
-        result.username = "jaden";
-        result.authToken = "1234";
-
-        res.status(200);
-
-
-        return gson.toJson(result);
     }
 
 
