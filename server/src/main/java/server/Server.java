@@ -135,29 +135,30 @@ public class Server {
         }
     }
 
-//    private Object joinGame(Request req, Response res) {
-//        JoinGameService joinGameService = new JoinGameService();
-//        Gson gson = new Gson();
-//        JoinGameBody joinGameBody = gson.fromJson(req.body(), JoinGameBody.class);
-//        String authToken = req.headers("authorization");
-//        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, joinGameBody.playerColor(), joinGameBody.gameID());
-//        try {
-//            res.status(200);
-//            return "{}";
-//        } catch (DataAccessException e) {
-//            res.status(500);
-//            return "{ \"message\": \"Error: description\" }";
-//        } catch (F400 f) {
-//            res.status(400);
-//            return "{ \"message\": \"Error: bad request\" }";
-//        } catch (F401 f) {
-//            res.status(401);
-//            return "{ \"message\": \"Error: unauthorized\" }";
-//        } catch (F403 f) {
-//            res.status(403);
-//            return "{ \"message\": \"Error: already taken\" }";
-//        }
-//    }
+    private Object joinGame(Request req, Response res) {
+        JoinGameService joinGameService = new JoinGameService();
+        Gson gson = new Gson();
+        JoinGameBody joinGameBody = gson.fromJson(req.body(), JoinGameBody.class);
+        String authToken = req.headers("authorization");
+        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, joinGameBody.playerColor(), joinGameBody.gameID());
+        try {
+            res.status(200);
+            joinGameService.joinGame(joinGameRequest);
+            return "{}";
+        } catch (DataAccessException e) {
+            res.status(500);
+            return "{ \"message\": \"Error: description\" }";
+        } catch (F400 f) {
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        } catch (F401 f) {
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
+        } catch (F403 f) {
+            res.status(403);
+            return "{ \"message\": \"Error: already taken\" }";
+        }
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -176,10 +177,10 @@ public class Server {
         Spark.delete("/session", this::logout);
 
         Spark.get("/game", this::listGames);
-//
+
         Spark.post("/game", this::createGame);
-//
-//        Spark.put("/game", this::joinGame);
+
+        Spark.put("/game", this::joinGame);
 
 
         // Register your endpoints and handle exceptions here.

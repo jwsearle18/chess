@@ -19,7 +19,7 @@ public class JoinGameService {
         AuthData authData = authDAO.getAuth(joinGameRequest.authToken());
         GameData gameData = gameDAO.getGame((joinGameRequest.gameID()));
         ChessGame.TeamColor playerColor = joinGameRequest.playerColor();
-
+        String playerName = authData.username();
         if(authData == null){
             throw new F401("Error: unauthorized");
         } else if(gameData == null) {
@@ -31,10 +31,13 @@ public class JoinGameService {
         } else if(playerColor == null) {
             //add as observer
             return;
-        } else {
-//            String playerName =
-//            GameData newGameData = new GameData()
-//            gameDAO.updateGame(newGameData);
+        } else if(playerColor == ChessGame.TeamColor.BLACK){
+            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), playerName, gameData.gameName(), gameData.game());
+            gameDAO.updateGame(newGameData);
+            return;
+        } else if(playerColor == ChessGame.TeamColor.WHITE){
+            GameData newGameData = new GameData(gameData.gameID(), playerName, gameData.blackUsername(), gameData.gameName(), gameData.game());
+            gameDAO.updateGame(newGameData);
             return;
         }
     }
