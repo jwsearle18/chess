@@ -9,13 +9,13 @@ import requests.LogoutRequest;
 
 public class LogoutService {
 
-    public AuthData logout(LogoutRequest logoutRequest) throws DataAccessException, F401 {
+    public void logout(LogoutRequest logoutRequest) throws DataAccessException, F401 {
 
         AuthDAO authDAO = new MemoryAuthDAO();
 
         AuthData authData = authDAO.getAuth(logoutRequest.authToken());
         if(authData != null){
-            return authData;
+            authDAO.deleteAuth(logoutRequest.authToken());
         } else {
             throw new F401("Error: unauthorized");
         }

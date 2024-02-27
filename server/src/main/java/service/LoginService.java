@@ -12,7 +12,7 @@ public class LoginService {
 
         String storedUsername = userDAO.getUser(loginRequest.username()).username();
         String storedPassword = userDAO.getUser(loginRequest.username()).password();
-        if(loginRequest.password().equals(storedPassword)) {
+        if(loginRequest.password().equals(storedPassword) && loginRequest.username().equals(storedUsername)) {
             AuthData newAuthToken = authDAO.createAuth(loginRequest.username());
             return newAuthToken;
         } else {

@@ -14,20 +14,19 @@ public class MemoryAuthDAO implements AuthDAO{
 
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken, username);
-        authTokens.put(authData.username(), authData);
+        authTokens.put(authToken, authData);
         return authData;
 
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException{
 
-        AuthData authData = authTokens.get(authToken);
-        return authData;
+        return authTokens.getOrDefault(authToken, null);
 
     }
 
-    public static void deleteAuth(String authToken) throws DataAccessException{
-        AuthData authData = authTokens.remove(authToken);
+    public void deleteAuth(String authToken) throws DataAccessException{
+        authTokens.remove(authToken);
     }
 
     public void clear() throws DataAccessException{

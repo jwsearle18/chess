@@ -8,9 +8,7 @@ import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import requests.LoginRequest;
-import requests.LogoutRequest;
-import requests.RegisterRequest;
+import requests.*;
 import results.RegisterResult;
 import service.*;
 import spark.*;
@@ -34,7 +32,7 @@ public class Server {
             return "";
         }
 
-        catch(DataAccessException E) {
+        catch(DataAccessException e) {
             res.status(500);
             return "{ \"message\": \"Error: description\" }";
         }
@@ -44,12 +42,12 @@ public class Server {
 //    }
     private Object register(Request req, Response res) {
 //        System.out.println(req.body());
-        RegisterService register = new RegisterService();
+        RegisterService registerService = new RegisterService();
         Gson gson = new Gson();
         UserData userData = gson.fromJson(req.body(), UserData.class);
         try {
             res.status(200);
-            AuthData result = register.register(userData);
+            AuthData result = registerService.register(userData);
             return gson.toJson(result);
         } catch (DataAccessException e){
             res.status(500);
@@ -57,19 +55,19 @@ public class Server {
         } catch (F400 f){
             res.status(400);
             return "{ \"message\": \"Error: bad request\" }";
-        } catch (F403 e) {
+        } catch (F403 f) {
             res.status(403);
             return "{ \"message\": \"Error: already taken\" }";
         }
     }
 
     private Object login(Request req, Response res) {
-        LoginService login = new LoginService();
+        LoginService loginService = new LoginService();
         Gson gson = new Gson();
         LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
         try {
             res.status(200);
-            AuthData result = login.login(loginRequest);
+            AuthData result = loginService.login(loginRequest);
             return gson.toJson(result);
         } catch (DataAccessException e) {
             res.status(500);
@@ -81,12 +79,27 @@ public class Server {
     }
 
     private Object logout(Request req, Response res) {
-        LogoutService logout = new LogoutService();
-        Gson gson = new Gson();
-        LogoutRequest logoutRequest = gson.fromJson(req.headers("Authorization"), LogoutRequest.class);
+        LogoutService logoutService = new LogoutService();
+        LogoutRequest logoutRequest = new LogoutRequest(req.headers("authorization"));
         try {
             res.status(200);
-            logout.logout(logoutRequest);
+            logoutService.logout(logoutRequest);
+            return "{}";
+        } catch (DataAccessException e) {
+            res.status(500);
+            return "{ \"message\": \"Error: description\" }";
+        } catch (F401 f) {
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
+    }
+
+    private Object listGames(Request req, Response res) {
+        ListGamesService listGamesService = new ListGamesService();
+        ListGamesRequest listGamesRequest = new ListGamesRequest(req.headers("authorization"));
+        try {
+            res.status(200);
+            listGamesService.listGames(listGamesRequest);
             return "";
         } catch (DataAccessException e) {
             res.status(500);
@@ -94,6 +107,51 @@ public class Server {
         } catch (F401 f) {
             res.status(401);
             return "{ \"message\": \"Error: unauthorized\" }";
+        }
+    }
+
+    private Object createGame(Request req, Response res) {
+        CreateGameService createGameService = new CreateGameService();
+        Gson gson = new Gson();
+        String authToken = req.headers("authorization");
+        GameName gameName = gson.fromJson(req.body(), GameName.class);
+
+        try {
+            res.status(200);
+            createGameService.createGame(authToken, gameName);
+            return "";
+        } catch (DataAccessException e) {
+            res.status(500);
+            return "{ \"message\": \"Error: description\" }";
+        } catch (F400 f) {
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        } catch (F401 f) {
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
+    }
+
+    private Object joinGame(Request req, Response res) {
+        JoinGameService joinGameService = new JoinGameService();
+        Gson gson = new Gson();
+        JoinGameRequest joinGameRequest = gson.fromJson(req.body(), JoinGameRequest.class);
+        try {
+            res.status(200);
+            joinGameService.joinGame(joinGameRequest);
+            return "";
+        } catch (DataAccessException e) {
+            res.status(500);
+            return "{ \"message\": \"Error: description\" }";
+        } catch (F400 f) {
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        } catch (F401 f) {
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
+        } catch (F403 f) {
+            res.status(403);
+            return "{ \"message\": \"Error: already taken\" }";
         }
     }
 
@@ -112,6 +170,12 @@ public class Server {
         Spark.post("/session", this::login);
 
         Spark.delete("/session", this::logout);
+
+        Spark.get("/game", this::listGames);
+//
+//        Spark.post("/game", this::createGame);
+//
+//        Spark.put("/game", this::joinGame);
 
 
         // Register your endpoints and handle exceptions here.
