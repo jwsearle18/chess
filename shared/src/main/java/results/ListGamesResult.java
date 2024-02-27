@@ -1,12 +1,12 @@
 package results;
 
+import requests.Game;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Objects;
 
-public class ListGamesResult {
-    Collection<Objects> games;
-    int gameID;
-    String whiteUsername;
-    String blackUsername;
-    String gameName;
+public record ListGamesResult(ArrayList<Game> games) {
+
 }

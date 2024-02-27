@@ -1,8 +1,5 @@
 package requests;
 
-public class RegisterRequest {
-    public String username;
-    public String password;
-    public String email;
+public record RegisterRequest(String username, String password, String email) {
 
 }

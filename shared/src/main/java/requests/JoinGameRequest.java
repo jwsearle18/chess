@@ -1,8 +1,7 @@
 package requests;
 
+import chess.ChessGame;
 import chess.ChessPiece;
 
-public class JoinGameRequest {
-    ChessPiece.PieceType playerColor;
-    int gameID;
+public record JoinGameRequest(String authToken, ChessGame.TeamColor playerColor, int gameID) {
 }
