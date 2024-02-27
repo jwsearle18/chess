@@ -21,7 +21,7 @@ public class MemoryAuthDAO implements AuthDAO{
 
     public AuthData getAuth(String authToken) throws DataAccessException{
 
-        return authTokens.getOrDefault(authToken, null);
+        return authTokens.get(authToken);
 
     }
 

@@ -11,6 +11,7 @@ import model.UserData;
 import requests.*;
 import results.CreateGameResult;
 import results.ListGamesResult;
+import results.LoginResult;
 import results.RegisterResult;
 import service.*;
 import spark.*;
@@ -31,7 +32,7 @@ public class Server {
         try {
             ClearService.clear();
             res.status(200);
-            return "";
+            return "{}";
         }
 
         catch(DataAccessException e) {
@@ -69,8 +70,9 @@ public class Server {
         LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
         try {
             res.status(200);
-            AuthData result = loginService.login(loginRequest);
-            return gson.toJson(result);
+            AuthData authDataResult = loginService.login(loginRequest);
+            LoginResult loginResult = new LoginResult(authDataResult.username(), authDataResult.authToken());
+            return gson.toJson(loginResult);
         } catch (DataAccessException e) {
             res.status(500);
             return "{ \"message\": \"Error: description\" }";
