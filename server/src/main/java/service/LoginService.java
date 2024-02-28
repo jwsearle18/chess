@@ -12,10 +12,10 @@ public class LoginService {
         AuthDAO authDAO = new MemoryAuthDAO();
 //separate into separate calls because getUser is calling for a null value, which doesn't work, so throw exception unauthprized
         String reqUsername = loginRequest.username();
-        if (reqUsername == null) {
+        UserData userData = userDAO.getUser(reqUsername);
+        if (userData == null) {
             throw new F401("Error: unauthorized");
         } else {
-            UserData userData = userDAO.getUser(reqUsername);
             String storedPassword = userData.password();
             if (loginRequest.password().equals(storedPassword)) {
                 return authDAO.createAuth(loginRequest.username());

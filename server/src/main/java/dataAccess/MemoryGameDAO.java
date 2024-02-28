@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class MemoryGameDAO implements GameDAO{
 
-    static final private HashMap<Integer, GameData> games = new HashMap<>();
+    public static HashMap<Integer, GameData> games = new HashMap<>();
 
     public void createGame(GameData gameData) {
         games.put(gameData.gameID(), gameData);

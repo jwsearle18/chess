@@ -40,11 +40,7 @@ public class Server {
             return "{ \"message\": \"Error: description\" }";
         }
     }
-//    private Object logout(Request req, Response res) {
-//        String authToken = req.headers("Authorization");
-//    }
     private Object register(Request req, Response res) {
-//        System.out.println(req.body());
         RegisterService registerService = new RegisterService();
         Gson gson = new Gson();
         UserData userData = gson.fromJson(req.body(), UserData.class);
