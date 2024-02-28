@@ -32,7 +32,7 @@ public class JoinGameService {
             throw new F400("Error: bad request");
         }
         else if(!isNull(playerColor)) {
-            if(playerColor.equals(ChessGame.TeamColor.BLACK) && !Objects.equals(gameData.blackUsername(), "")) {
+            if(playerColor.equals(ChessGame.TeamColor.BLACK) && !Objects.equals(gameData.blackUsername(), null)) {
                 throw new F403("Error: already taken");
             } else {
                 if(playerColor.equals(ChessGame.TeamColor.BLACK)) {
@@ -40,7 +40,7 @@ public class JoinGameService {
                     gameDAO.updateGame(newGameData);
                 }
             }
-            if(playerColor.equals(ChessGame.TeamColor.WHITE) && !Objects.equals(gameData.whiteUsername(), "")) {
+            if(playerColor.equals(ChessGame.TeamColor.WHITE) && !Objects.equals(gameData.whiteUsername(), null)) {
 
                 throw new F403("Error: already taken");
             } else {

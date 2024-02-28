@@ -26,7 +26,7 @@ public class CreateGameService {
         } else {
             Random randomNumber = new Random();
             int n = randomNumber.nextInt(1000000);
-            GameData gameData = new GameData(n, "", "", createGameRequest.gameName(), new ChessGame());
+            GameData gameData = new GameData(n, null, null, createGameRequest.gameName(), new ChessGame());
             gameDAO.createGame(gameData);
             return new CreateGameResult(gameData.gameID());
         }
