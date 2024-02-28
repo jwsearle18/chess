@@ -36,7 +36,6 @@ public class JoinGameService {
                 throw new F403("Error: already taken");
             } else {
                 if(playerColor.equals(ChessGame.TeamColor.BLACK)) {
-//                    String playerName = authData.username();
                     GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), playerName, gameData.gameName(), gameData.game());
                     gameDAO.updateGame(newGameData);
                 }
@@ -46,7 +45,6 @@ public class JoinGameService {
                 throw new F403("Error: already taken");
             } else {
                 if(playerColor.equals(ChessGame.TeamColor.WHITE)) {
-//                    String playerName = authData.username();
                     GameData newGameData = new GameData(gameData.gameID(), playerName, gameData.blackUsername(), gameData.gameName(), gameData.game());
                     gameDAO.updateGame(newGameData);
                 }
@@ -56,31 +54,5 @@ public class JoinGameService {
             return;
         }
 
-//        else if(!Objects.equals(gameData.blackUsername(), "") && playerColor == ChessGame.TeamColor.BLACK) {
-//            throw new F403("Error: already taken");
-//        } else if(!Objects.equals(gameData.whiteUsername(), "") && playerColor == ChessGame.TeamColor.WHITE) {
-//            throw new F403("Error: already taken");
-//        } else if(playerColor == null) {
-//            //add as observer
-//            return;
-//        } else if(playerColor == ChessGame.TeamColor.BLACK){
-//            String playerName = authData.username();
-//            if(playerName != null) {
-//                GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), playerName, gameData.gameName(), gameData.game());
-//                gameDAO.updateGame(newGameData);
-//                return;
-//            } else {
-//                throw new F400("Error: bad request");
-//            }
-//        } else if(playerColor == ChessGame.TeamColor.WHITE){
-//            String playerName = authData.username();
-//            if(playerName != null) {
-//                GameData newGameData = new GameData(gameData.gameID(), playerName, gameData.blackUsername(), gameData.gameName(), gameData.game());
-//                gameDAO.updateGame(newGameData);
-//                return;
-//            } else {
-//                throw new F400("Error: bad request");
-//            }
-//        }
     }
 }
