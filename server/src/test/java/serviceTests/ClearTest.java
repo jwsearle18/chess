@@ -1,11 +1,7 @@
 package serviceTests;
 
-
-
 import chess.ChessGame;
 import dataAccess.*;
-import jdk.jshell.spi.ExecutionControl;
-import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,10 +12,10 @@ import java.util.HashMap;
 import static dataAccess.MemoryAuthDAO.authTokens;
 import static dataAccess.MemoryGameDAO.games;
 import static dataAccess.MemoryUserDAO.users;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static service.ClearService.clear;
 
-public class serviceTests {
+public class ClearTest {
 
     @BeforeAll
     static void fillDAOs() throws DataAccessException {
@@ -27,7 +23,7 @@ public class serviceTests {
         AuthDAO authDAO = new MemoryAuthDAO();
         UserDAO userDAO = new MemoryUserDAO();
 
-        GameData gameData = new GameData(1, "wguy", "bguy", "gameName", new ChessGame());
+        GameData gameData = new GameData(1, "w", "b", "gameName", new ChessGame());
         UserData userData = new UserData("jaden", "password", "email");
 
         gameDAO.createGame(gameData);
@@ -35,6 +31,7 @@ public class serviceTests {
         userDAO.createUser(userData);
 
     }
+
     @Test
     void clearTest() throws Exception {
         clear();
