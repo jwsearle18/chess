@@ -49,16 +49,6 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
 
-    ChessPiece whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-    ChessPiece blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-
-    public ChessPiece getKing(ChessGame.TeamColor teamColor) {
-        if(teamColor == ChessGame.TeamColor.WHITE) {
-            return whiteKing;
-        } else {
-            return blackKing;
-        }
-    }
 
     public void resetBoard() {
         ChessPiece [][] squares = new ChessPiece[8][8];
