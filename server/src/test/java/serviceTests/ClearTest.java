@@ -4,8 +4,12 @@ import chess.ChessGame;
 import dataAccess.*;
 import model.GameData;
 import model.UserData;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import passoffTests.obfuscatedTestClasses.TestServerFacade;
+import passoffTests.testClasses.TestModels;
+import server.Server;
 
 import java.util.HashMap;
 
@@ -14,8 +18,8 @@ import static dataAccess.MemoryGameDAO.games;
 import static dataAccess.MemoryUserDAO.users;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static service.ClearService.clear;
-
 public class ClearTest {
+
 
     @BeforeAll
     static void fillDAOs() throws DataAccessException {
@@ -39,6 +43,5 @@ public class ClearTest {
         assertEquals(new HashMap<>(), users);
         assertEquals(new HashMap<>(), authTokens);
     }
-
 
 }
