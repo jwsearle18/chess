@@ -12,7 +12,7 @@ import service.CreateGameService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CreateGameTest {
+public class CreateGameTests {
     static CreateGameService createGameService;
     static AuthDAO authDAO;
     static GameDAO gameDAO;
