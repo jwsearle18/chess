@@ -30,6 +30,5 @@ public class CreateGameService {
             gameDAO.createGame(gameData);
             return new CreateGameResult(gameData.gameID());
         }
-
     }
 }
