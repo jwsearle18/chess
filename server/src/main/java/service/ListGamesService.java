@@ -14,8 +14,8 @@ import java.util.HashMap;
 public class ListGamesService {
 
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException, F401 {
-        GameDAO gameDAO  = new MemoryGameDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO  = new SQLGameDAO();
+        AuthDAO authDAO = new SQLAuthDAO();
 
         AuthData authData = authDAO.getAuth(listGamesRequest.authToken());
         if(authData != null){

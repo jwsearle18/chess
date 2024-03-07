@@ -10,8 +10,8 @@ import java.util.UUID;
 
 public class RegisterService {
     public AuthData register(UserData user) throws DataAccessException, F400, F403 {
-        UserDAO userDAO = new MemoryUserDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
+        UserDAO userDAO = new SQLUserDAO();
+        AuthDAO authDAO = new SQLAuthDAO();
 
         if(user.username() == null || user.password() == null || user.email() == null) {
 

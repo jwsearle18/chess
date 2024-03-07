@@ -8,8 +8,8 @@ import requests.LoginRequest;
 
 public class LoginService {
     public AuthData login(LoginRequest loginRequest) throws DataAccessException, F401 {
-        UserDAO userDAO = new MemoryUserDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
+        UserDAO userDAO = new SQLUserDAO();
+        AuthDAO authDAO = new SQLAuthDAO();
         String reqUsername = loginRequest.username();
         UserData userData = userDAO.getUser(reqUsername);
         if (userData == null) {

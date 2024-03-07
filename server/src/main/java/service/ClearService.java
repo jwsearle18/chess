@@ -6,9 +6,9 @@ import org.eclipse.jetty.server.Authentication;
 
 public class ClearService {
     public static void clear() throws DataAccessException {
-        AuthDAO authDAO = new MemoryAuthDAO();
-        UserDAO userDAO = new MemoryUserDAO();
-        GameDAO gameDAO = new MemoryGameDAO();
+        AuthDAO authDAO = new SQLAuthDAO();
+        UserDAO userDAO = new SQLUserDAO();
+        GameDAO gameDAO = new SQLGameDAO();
 
         authDAO.clear();
         userDAO.clear();

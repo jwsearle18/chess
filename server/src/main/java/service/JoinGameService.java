@@ -17,8 +17,8 @@ import static java.util.Objects.isNull;
 
 public class JoinGameService {
     public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException, F400, F401, F403 {
-        GameDAO gameDAO = new MemoryGameDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO = new SQLGameDAO();
+        AuthDAO authDAO = new SQLAuthDAO();
         if(isNull(authDAO.getAuth(joinGameRequest.authToken()))){
             throw new F401("Error: unauthorized");
         }
