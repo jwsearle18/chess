@@ -11,6 +11,27 @@ import java.util.ArrayList;
 
 public class SQLGameDAO implements GameDAO{
 
+    public SQLGameDAO() throws DataAccessException {
+        createTableIfNotExists();
+    }
+
+    private void createTableIfNotExists() throws DataAccessException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS games (
+                gameID INT PRIMARY KEY,
+                whiteUsername VARCHAR(255),
+                blackUsername VARCHAR(255),
+                gameName VARCHAR(255),
+                chessGame longtext NOT NULL
+                """;
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     private final Gson gson = new GsonBuilder().create();
 
     @Override

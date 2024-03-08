@@ -12,6 +12,25 @@ import static dataAccess.DatabaseManager.getConnection;
 
 public class SQLUserDAO implements UserDAO {
 
+    public SQLUserDAO() throws DataAccessException {
+        createTableIfNotExists();
+    }
+
+    private void createTableIfNotExists() throws DataAccessException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS users (
+                username VARCHAR(255) PRIMARY KEY,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                """;
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();

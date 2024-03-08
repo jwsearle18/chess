@@ -8,6 +8,25 @@ import java.util.UUID;
 
 public class SQLAuthDAO implements AuthDAO{
 
+    public SQLAuthDAO() throws DataAccessException {
+        createTableIfNotExists();
+    }
+
+    private void createTableIfNotExists() throws DataAccessException {
+        String sql = """
+                CREATE TABLE IF NOT EXISTS auths (
+                    authToken VARCHAR(255) PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL
+                )
+                """;
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
