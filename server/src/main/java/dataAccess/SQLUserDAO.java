@@ -13,21 +13,24 @@ import static dataAccess.DatabaseManager.getConnection;
 public class SQLUserDAO implements UserDAO {
 
     public SQLUserDAO() throws DataAccessException {
-        createTableIfNotExists();
+        configureDatabase();
     }
 
-    private void createTableIfNotExists() throws DataAccessException {
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
         String sql = """
             CREATE TABLE IF NOT EXISTS users (
                 username VARCHAR(255) PRIMARY KEY,
                 password VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL
+                )
                 """;
-        try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(sql);
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(sql)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
 

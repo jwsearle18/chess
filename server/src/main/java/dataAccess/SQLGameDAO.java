@@ -12,10 +12,11 @@ import java.util.ArrayList;
 public class SQLGameDAO implements GameDAO{
 
     public SQLGameDAO() throws DataAccessException {
-        createTableIfNotExists();
+        configureDatabase();
     }
 
-    private void createTableIfNotExists() throws DataAccessException {
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
         String sql = """
             CREATE TABLE IF NOT EXISTS games (
                 gameID INT PRIMARY KEY,
@@ -23,12 +24,14 @@ public class SQLGameDAO implements GameDAO{
                 blackUsername VARCHAR(255),
                 gameName VARCHAR(255),
                 chessGame longtext NOT NULL
+                )
                 """;
-        try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(sql);
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(sql)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
 
