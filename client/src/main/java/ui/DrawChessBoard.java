@@ -12,6 +12,12 @@ import static ui.EscapeSequences.*;
 public class DrawChessBoard {
 
     private static final int BOARD_SIZE_IN_SQUARES = 8;
+
+    public static void printChessBoards(PrintStream out, ChessBoard board, boolean whiteAtBottom) {
+        draw(out, board, !whiteAtBottom);
+        out.print("\n");
+        draw(out, board, whiteAtBottom);
+    }
     public static void draw(PrintStream out, ChessBoard board, boolean whiteAtBottom) {
         out.print(ERASE_SCREEN);
         out.print(SET_BG_COLOR_BLACK);

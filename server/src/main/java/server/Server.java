@@ -173,8 +173,6 @@ public class Server {
         Spark.put("/game", this::joinGame);
 
 
-        // Register your endpoints and handle exceptions here.
-
         Spark.awaitInitialization();
         return Spark.port();
     }
