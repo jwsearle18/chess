@@ -27,7 +27,13 @@ public class CommandHandler {
                     register(parts[1], parts[2], parts[3]);
                 }
             }
-//            case "logout" -> logout();
+            case "logout" -> {
+                if (currentState == State.LOGGED_IN) {
+                    logout();
+                } else {
+                    System.out.println("You are not logged in.");
+                }
+            }
 //            case "create game" -> createGame();
 //            case "list games" -> listGames();
 //            case "join game" -> joinGame();
@@ -36,9 +42,15 @@ public class CommandHandler {
         }
     }
 
-//    private void logout() {
-//
-//    }
+    private void logout() {
+        String response = httpClient.postLogout();
+        if(response.equals("Logout successful!")) {
+            ui.setCurrentState((State.LOGGED_OUT));
+            System.out.println("You have been logged out.");
+        } else {
+            System.out.println(response);
+        }
+    }
 
     private void login(String username, String password) {
         String response = httpClient.postLogin(username, password);
