@@ -17,7 +17,7 @@ public class Main {
         board.resetBoard();
 
         draw(out, board, false);
-        out.print("\n\n");
+        out.print("\n");
         draw(out, board, true);
 
         out.print(SET_BG_COLOR_BLACK);
