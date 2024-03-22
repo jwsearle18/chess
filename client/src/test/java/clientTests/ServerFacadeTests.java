@@ -105,23 +105,40 @@ public class ServerFacadeTests {
     }
     @Test
     void postCreateGameNegative() {
+        httpClient.clearAuthToken();
 
+        String gameName = "game" + System.currentTimeMillis();
+        String createGameResponse = httpClient.postCreateGame(gameName);
+        assertTrue(createGameResponse.contains("Unable to Create Game. No active session."));
     }
+
     @Test
     void joinGamesPositive() {
-
     }
-
-
     @Test
     void joinGamesNegative() {
+        httpClient.clearAuthToken();
+
+        String joinGameResponse = httpClient.joinGame(999, "WHITE");
+        assertTrue(joinGameResponse.contains("Unable to join game. No active session."));
     }
 
     @Test
     void listGamesPositive() {
+        String username = "listGamesUser" + System.currentTimeMillis();
+        httpClient.postRegister(username, "password", username + "@test.com");
+        httpClient.postLogin(username, "password");
+
+        // Test: Attempt to list games
+        String listGamesResponse = httpClient.listGames();
+        assertNotNull(listGamesResponse);
     }
     @Test
     void listGamesNegative() {
+        httpClient.clearAuthToken();
+
+        String listGamesResponse = httpClient.listGames();
+        assertTrue(listGamesResponse.contains("Unable to list games. No active session."));
     }
 
 

@@ -18,6 +18,10 @@ public class HttpClient {
         this.serverURL = "http://localhost:" + port;
     }
 
+    public void clearAuthToken() {
+        this.authToken = null;
+    }
+
     private String sendHttpRequest(String path, String method, String content, boolean needsAuth) {
         try {
             URL url = new URL(this.serverURL + path);
