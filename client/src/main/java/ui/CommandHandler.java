@@ -215,7 +215,7 @@ public class CommandHandler {
                 System.out.println("""
                         create <NAME> - a game
                         list - games
-                        join <ID> [WHITE|BLACK|<empty>] - a game
+                        join <ID> [WHITE|BLACK] - a game
                         observe <ID> - a game
                         logout - when you are done
                         quit - playing chess
