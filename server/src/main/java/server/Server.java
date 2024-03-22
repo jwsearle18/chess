@@ -119,7 +119,7 @@ public class Server {
         CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName.gameName());
         try {
             res.status(200);
-            CreateGameResult createGameResult = CreateGameService.createGame(createGameRequest);
+            CreateGameResult createGameResult = createGameService.createGame(createGameRequest);
             return gson.toJson(createGameResult);
         } catch (DataAccessException e) {
             res.status(500);

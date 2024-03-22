@@ -37,7 +37,7 @@ public class CreateGameTests {
         AuthData authData = authDAO.createAuth(username);
         CreateGameRequest createGameRequest = new CreateGameRequest(authData.authToken(), gameName);
 
-        CreateGameResult createGameResult = CreateGameService.createGame(createGameRequest);
+        CreateGameResult createGameResult = createGameService.createGame(createGameRequest);
 
         assertNotNull(createGameResult);
         assertNotNull(gameDAO.getGame(createGameResult.gameID()));
@@ -50,7 +50,7 @@ public class CreateGameTests {
         CreateGameRequest createGameRequest = new CreateGameRequest(authData.authToken(), null);
 
         Exception exception = assertThrows(F400.class, () -> {
-            CreateGameService.createGame(createGameRequest);
+            createGameService.createGame(createGameRequest);
         });
 
         String expectedMessage = "Error: bad request";

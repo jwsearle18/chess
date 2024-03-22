@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class CreateGameService {
 
-    public static CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException, F400, F401{
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException, F400, F401{
         GameDAO gameDAO  = new SQLGameDAO();
         AuthDAO authDAO = new SQLAuthDAO();
 

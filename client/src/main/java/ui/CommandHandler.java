@@ -1,8 +1,20 @@
 package ui;
 
+import chess.ChessBoard;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static ui.DrawChessBoard.printChessBoards;
+
 public class CommandHandler {
     private final UserInterface ui;
     private final HttpClient httpClient = new HttpClient();
+    private Map<Integer, Integer> gameNumbertoGameID = new HashMap<>();
 
     public CommandHandler(UserInterface ui) {
         this.ui = ui;
@@ -34,12 +46,128 @@ public class CommandHandler {
                     System.out.println("You are not logged in.");
                 }
             }
-//            case "create game" -> createGame();
-//            case "list games" -> listGames();
-//            case "join game" -> joinGame();
-//            case "join observer" -> joinObserver();
+            case "create" -> {
+                if (currentState != State.LOGGED_IN) {
+                    System.out.println("You must be logged in to create a game.");
+                } else if (parts.length != 2) {
+                    System.out.println("Usage: create <NAME> - a game");
+                } else {
+                    createGame(parts[1]);
+                }
+            }
+            case "list" -> {
+                if (currentState != State.LOGGED_IN) {
+                    System.out.println("You must be logged in to list games.");
+                } else {
+                    listGames();
+                }
+            }
+            case "join" -> {
+                if (currentState != State.LOGGED_IN) {
+                    System.out.println("You must be logged in to join a game.");
+                } else if (parts.length != 3) {
+                    System.out.println("Usage: join <GAME NUMBER> <COLOR>");
+                } else {
+                    try {
+                        int gameNumber = Integer.parseInt(parts[1]);
+                        String color = parts[2];
+                        joinGame(gameNumber, color);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid game number format.");
+                    }
+                }
+            }
+            case "observe" -> {
+                if (currentState != State.LOGGED_IN) {
+                    System.out.println("You must be logged in to observe a game.");
+                } else if (parts.length != 2) {
+                    System.out.println("Usage: observe <GAME NUMBER>");
+                } else {
+                    try {
+                        int gameNumber = Integer.parseInt(parts[1]);
+                        observeGame(gameNumber);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid game number format.");
+                    }
+                }
+            }
             default -> System.out.println("Unknown command.");
         }
+    }
+
+    private void observeGame(int gameNumber) {
+        if (!gameNumbertoGameID.containsKey(gameNumber)) {
+            System.out.println("Invalid game number.");
+        } else {
+            Integer gameID = gameNumbertoGameID.get(gameNumber);
+            if (gameID == null) {
+                System.out.println("Invalid game number.");
+                return;
+            }
+
+            String response = httpClient.joinGame(gameID, null);
+            System.out.println(response);
+
+            if (response.contains("Successfully started observing game")) {
+                ChessBoard board = new ChessBoard();
+                board.resetBoard();
+                printChessBoards(System.out, board, true); // White at bottom
+            }
+        }
+    }
+
+
+    private void joinGame(int gameNumber, String color) {
+        Integer gameID = gameNumbertoGameID.get(gameNumber);
+        if (gameID == null) {
+            System.out.println("Invalid game number.");
+            return;
+        }
+
+        String response = httpClient.joinGame(gameID, color);
+        System.out.println(response);
+        if (response.contains("Successfully joined game")) {
+            ChessBoard board = new ChessBoard();
+            board.resetBoard(); // Assuming this method initializes the board
+            boolean whiteAtBottom = color.equalsIgnoreCase("white");
+            printChessBoards(System.out, board, whiteAtBottom);
+        }
+    }
+
+    private void listGames() {
+        String response = httpClient.listGames();
+        gameNumbertoGameID.clear();
+        if (!response.startsWith("Failed to list games.")) {
+            try {
+                JsonObject jsonResponse = JsonParser.parseString(response).getAsJsonObject();
+                JsonArray gamesList = jsonResponse.getAsJsonArray("games");
+                if (gamesList.isEmpty()) {
+                    System.out.println("No games available.");
+                    return;
+                }
+                System.out.println("Available games:");
+                int number = 1;
+                for (JsonElement gameElement : gamesList) {
+                    JsonObject game = gameElement.getAsJsonObject();
+                    int gameID = game.get("gameID").getAsInt();
+                    gameNumbertoGameID.put(number, gameID);
+                    String gameName = game.has("gameName") ? game.get("gameName").getAsString() : "Unnamed Game";
+                    String whiteUsername = game.has("whiteUsername") && !game.get("whiteUsername").isJsonNull() ? game.get("whiteUsername").getAsString() : "Waiting for player";
+                    String blackUsername = game.has("blackUsername") && !game.get("blackUsername").isJsonNull() ? game.get("blackUsername").getAsString() : "Waiting for player";
+                    System.out.printf("%d. %s - White: %s, Black: %s%n", number, gameName, whiteUsername, blackUsername);
+                    number++;
+                }
+            } catch (Exception e) {
+                System.out.println("Failed to process games list.");
+            }
+        } else {
+            System.out.println(response);
+        }
+    }
+
+    private void createGame(String gameName) {
+        String response = httpClient.postCreateGame(gameName);
+        System.out.println(response);
     }
 
     private void logout() {

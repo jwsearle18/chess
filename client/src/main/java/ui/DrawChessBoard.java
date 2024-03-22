@@ -14,9 +14,15 @@ public class DrawChessBoard {
     private static final int BOARD_SIZE_IN_SQUARES = 8;
 
     public static void printChessBoards(PrintStream out, ChessBoard board, boolean whiteAtBottom) {
-        draw(out, board, !whiteAtBottom);
-        out.print("\n");
-        draw(out, board, whiteAtBottom);
+        if (whiteAtBottom) {
+            draw(out, board, false);
+            out.print("\n");
+            draw(out, board, true);
+        } else {
+            draw(out, board, true);
+            out.print("\n");
+            draw(out, board, false);
+        }
     }
     public static void draw(PrintStream out, ChessBoard board, boolean whiteAtBottom) {
         out.print(ERASE_SCREEN);
