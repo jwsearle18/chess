@@ -4,6 +4,9 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import ui.HttpClient;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class ServerFacadeTests {
 
@@ -61,9 +64,23 @@ public class ServerFacadeTests {
 
     @Test
     void postRegisterPositive() {
+        String username = "jaden" + System.currentTimeMillis();
+        String password = "jadenPass";
+        String email = "jaden" + System.currentTimeMillis() + "@jaden.com";
+
+        String response = httpClient.postRegister(username, password, email);
+        assertNotNull(response);
+        assertTrue(response.contains("Registration successful"));
     }
     @Test
     void postRegisterNegative() {
+        String username = "sameGuy";
+        String password = "pass";
+        String email = "sameGuy@jaden.com";
+
+        httpClient.postRegister(username, password, email); // First attempt
+        String response = httpClient.postRegister(username, password, email); // Second attempt should fail
+        assertTrue(response.contains("403"));
     }
 
 }
