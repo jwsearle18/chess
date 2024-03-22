@@ -10,17 +10,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class HttpClient {
-    private static final String SERVER_URL;
-    static {
-        int port = Integer.parseInt(System.getProperty("TEST_SERVER_PORT","8080" ));
-        SERVER_URL = "http://localhost:" + port;
-    }
+    private final String serverURL;
 
     private String authToken = null;
 
+    public HttpClient(int port) {
+        this.serverURL = "http://localhost:" + port;
+    }
+
     private String sendHttpRequest(String path, String method, String content, boolean needsAuth) {
         try {
-            URL url = new URL(SERVER_URL + path);
+            URL url = new URL(this.serverURL + path);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(method);
 

@@ -6,7 +6,11 @@ import java.util.WeakHashMap;
 public class UserInterface {
     private State currentState = State.LOGGED_OUT;
 
-    private final CommandHandler commandHandler = new CommandHandler(this);
+    private final CommandHandler commandHandler;
+
+    public UserInterface(int port) {
+        this.commandHandler = new CommandHandler(this, port);
+    }
 
     public void start() {
         printWelcomeMessage();

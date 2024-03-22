@@ -13,11 +13,12 @@ import static ui.DrawChessBoard.printChessBoards;
 
 public class CommandHandler {
     private final UserInterface ui;
-    private final HttpClient httpClient = new HttpClient();
+    private final HttpClient httpClient;
     private Map<Integer, Integer> gameNumbertoGameID = new HashMap<>();
 
-    public CommandHandler(UserInterface ui) {
+    public CommandHandler(UserInterface ui, int port) {
         this.ui = ui;
+        this.httpClient = new HttpClient(port);
     }
     public void handleCommand(String command, State currentState) {
         String[] parts = command.split(" ");
@@ -111,7 +112,7 @@ public class CommandHandler {
             if (response.contains("Successfully joined game!")) {
                 ChessBoard board = new ChessBoard();
                 board.resetBoard();
-                printChessBoards(System.out, board, true); // White at bottom
+                printChessBoards(System.out, board, true);
             }
         }
     }
