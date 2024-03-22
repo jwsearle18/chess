@@ -25,12 +25,16 @@ public class DrawChessBoard {
         }
     }
     public static void draw(PrintStream out, ChessBoard board, boolean whiteAtBottom) {
-        out.print(ERASE_SCREEN);
-        out.print(SET_BG_COLOR_BLACK);
+
+        out.print(RESET_BG_COLOR);
         out.print(SET_TEXT_COLOR_BLACK);
+        out.print(ERASE_SCREEN);
 
         drawBoard(out, board, whiteAtBottom);
         out.print(moveCursorToLocation(0, BOARD_SIZE_IN_SQUARES + 3));
+
+        out.print(RESET_BG_COLOR);
+        out.print(SET_TEXT_COLOR_WHITE);
     }
 
     public static void printColumnLabel(PrintStream out, boolean whiteAtBottom) {

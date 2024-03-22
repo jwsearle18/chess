@@ -10,7 +10,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class HttpClient {
-    private static final String SERVER_URL = "http://localhost:8080";
+    private static final String SERVER_URL;
+    static {
+        int port = Integer.parseInt(System.getProperty("TEST_SERVER_PORT","8080" ));
+        SERVER_URL = "http://localhost:" + port;
+    }
+
     private String authToken = null;
 
     private String sendHttpRequest(String path, String method, String content, boolean needsAuth) {
@@ -40,9 +45,9 @@ public class HttpClient {
                 while ((line = reader.readLine()) != null) {
                     response.append(line);
                 }
-                return response.toString(); // Return response content for further processing
+                return response.toString();
             } else {
-                return "Server responded with code: " + responseCode; // Simplified error handling
+                return "Server responded with code: " + responseCode;
             }
         } catch (Exception e) {
             return "Error: " + e.getMessage();

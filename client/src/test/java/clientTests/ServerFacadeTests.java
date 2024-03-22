@@ -12,6 +12,7 @@ public class ServerFacadeTests {
     public static void init() {
         server = new Server();
         var port = server.run(0);
+        System.setProperty("TEST_SERVER_PORT", String.valueOf(port));
         System.out.println("Started test HTTP server on " + port);
     }
 

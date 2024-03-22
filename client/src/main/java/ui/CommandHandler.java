@@ -108,7 +108,7 @@ public class CommandHandler {
             String response = httpClient.joinGame(gameID, null);
             System.out.println(response);
 
-            if (response.contains("Successfully started observing game")) {
+            if (response.contains("Successfully joined game!")) {
                 ChessBoard board = new ChessBoard();
                 board.resetBoard();
                 printChessBoards(System.out, board, true); // White at bottom
@@ -128,7 +128,7 @@ public class CommandHandler {
         System.out.println(response);
         if (response.contains("Successfully joined game")) {
             ChessBoard board = new ChessBoard();
-            board.resetBoard(); // Assuming this method initializes the board
+            board.resetBoard();
             boolean whiteAtBottom = color.equalsIgnoreCase("white");
             printChessBoards(System.out, board, whiteAtBottom);
         }
