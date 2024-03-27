@@ -1,11 +1,8 @@
 package clientTests;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.junit.jupiter.api.*;
 import server.Server;
-import ui.HttpClient;
+import ui.ServerFacade;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,14 +10,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServerFacadeTests {
 
     private static Server server;
-    private static HttpClient httpClient;
+    private static ServerFacade httpClient;
 
     @BeforeAll
     public static void init() {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        httpClient = new HttpClient(port);
+        httpClient = new ServerFacade(port);
     }
 
     @AfterAll

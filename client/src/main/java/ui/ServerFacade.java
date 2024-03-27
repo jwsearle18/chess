@@ -9,12 +9,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HttpClient {
+public class ServerFacade {
     private final String serverURL;
 
     private String authToken = null;
 
-    public HttpClient(int port) {
+    public ServerFacade(int port) {
         this.serverURL = "http://localhost:" + port;
     }
 
