@@ -163,6 +163,8 @@ public class Server {
 
         Spark.staticFileLocation("/web");
 
+
+
         Spark.get("/name", this::listNames);
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);

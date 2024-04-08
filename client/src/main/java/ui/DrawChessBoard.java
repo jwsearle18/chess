@@ -71,6 +71,9 @@ public class DrawChessBoard {
 
     public static void drawSquare(PrintStream out, int row, int col, boolean whiteAtBottom, ChessPiece piece) {
         boolean isLightSquare = (row + col) % 2 == 0;
+        if(!whiteAtBottom) {
+            isLightSquare = (row + col) % 2 != 0;
+        }
         String bgColor = isLightSquare ? SET_BG_COLOR_WHITE : SET_BG_COLOR_MAGENTA;
         out.print(bgColor);
 
