@@ -16,7 +16,7 @@ import java.util.Objects;
 import static java.util.Objects.isNull;
 
 public class JoinGameService {
-    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException, F400, F401, F403 {
+    public String joinGame(JoinGameRequest joinGameRequest) throws DataAccessException, F400, F401, F403 {
         GameDAO gameDAO = new SQLGameDAO();
         AuthDAO authDAO = new SQLAuthDAO();
         if(isNull(authDAO.getAuth(joinGameRequest.authToken()))){
@@ -51,7 +51,8 @@ public class JoinGameService {
             }
         } else {
             //add observer
-            return;
+            return playerName;
         }
+        return playerName;
     }
 }

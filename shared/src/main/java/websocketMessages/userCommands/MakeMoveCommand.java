@@ -1,4 +1,4 @@
 package websocketMessages.userCommands;
 
-public class MakeMove {
+public class MakeMoveCommand {
 }

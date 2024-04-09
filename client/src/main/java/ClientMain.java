@@ -1,14 +1,6 @@
-import chess.*;
-import ui.DrawChessBoard;
 import ui.UserInterface;
 
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-
-import static ui.DrawChessBoard.*;
-import static ui.EscapeSequences.*;
-
-public class Main {
+public class ClientMain {
 
 
     public static void main(String[] args) {
@@ -24,7 +16,7 @@ public class Main {
 //        out.print(SET_TEXT_COLOR_WHITE);
 //        var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
 //        System.out.println("♕ 240 Chess Client: " + piece);
-        int desiredPort = 8080;
+        int desiredPort = 4040;
         if (args.length > 0) {
             desiredPort = Integer.parseInt(args[0]);
         }
