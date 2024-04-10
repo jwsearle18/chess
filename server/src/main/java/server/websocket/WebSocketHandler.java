@@ -169,25 +169,11 @@ public class WebSocketHandler {
                 session.getRemote().sendString(gson.toJson(errorMessage));
                 return;
             }
-//            if (!game.validMoves(makeMoveCommand.getMove().getStartPosition()).contains(makeMoveCommand.getMove())) {
-//                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid move, Sarge, try again perhaps.");
-//                session.getRemote().sendString(gson.toJson(errorMessage));
-//                return;
-//            }
-            boolean isValidMove = false;
-            for (ChessMove validMove : game.validMoves(makeMoveCommand.getMove().getStartPosition())) {
-                if (areMovesEquivalent(makeMoveCommand.getMove(), validMove)) {
-                    isValidMove = true;
-                    break;
-                }
-            }
-
-            if (!isValidMove) {
+            if (!game.validMoves(makeMoveCommand.getMove().getStartPosition()).contains(makeMoveCommand.getMove())) {
                 ErrorMessage errorMessage = new ErrorMessage("Error: Invalid move, Sarge, try again perhaps.");
                 session.getRemote().sendString(gson.toJson(errorMessage));
                 return;
             }
-
 
             game.makeMove(makeMoveCommand.getMove());
             gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game));
@@ -206,12 +192,7 @@ public class WebSocketHandler {
             session.getRemote().sendString(gson.toJson(errorMessage));
         }
     }
-    private boolean areMovesEquivalent(ChessMove move1, ChessMove move2) {
-        if (!move1.getStartPosition().equals(move2.getStartPosition())) return false;
-        if (!move1.getEndPosition().equals(move2.getEndPosition())) return false;
-        return (move1.getPromotionPiece() == null && move2.getPromotionPiece() == null) ||
-                (move1.getPromotionPiece() != null && move1.getPromotionPiece().equals(move2.getPromotionPiece()));
-    }
+
 
     public void handleResign(Session session, String message) throws IOException {
         ResignCommand resignCommand = gson.fromJson(message, ResignCommand.class);
