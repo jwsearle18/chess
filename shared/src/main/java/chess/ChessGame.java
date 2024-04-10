@@ -13,10 +13,12 @@ public class ChessGame {
 
     private ChessBoard board;
     private TeamColor team;
+    private GameStatus status;
 
     public ChessGame() {
         setTeamTurn(TeamColor.WHITE);
         setBoard(board);
+        setGameStatus(GameStatus.ACTIVE);
     }
 
 
@@ -35,6 +37,16 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         this.team = team;
+    }
+    public void setGameStatus(GameStatus status) {
+    }
+    public GameStatus getGameStatus() {
+        return status;
+    }
+
+    public enum GameStatus {
+        ACTIVE,
+        INACTIVE
     }
 
 
