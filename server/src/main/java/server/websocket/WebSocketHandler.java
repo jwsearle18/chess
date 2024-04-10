@@ -13,6 +13,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocketMessages.serverMessages.ErrorMessage;
 import websocketMessages.serverMessages.LoadGameMessage;
 import websocketMessages.serverMessages.NotificationMessage;
+import websocketMessages.userCommands.JoinObserverCommand;
 import websocketMessages.userCommands.JoinPlayerCommand;
 import websocketMessages.userCommands.UserGameCommand;
 
@@ -31,63 +32,99 @@ public class WebSocketHandler {
         UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
 
         switch (command.getCommandType()) {
-            case JOIN_PLAYER -> {
-                handleJoinPlayer(session, message);
-            }
+            case JOIN_PLAYER -> handleJoinPlayer(session, message);
+            case JOIN_OBSERVER -> handleJoinObserver(session, message);
         }
     }
 
-private void handleJoinPlayer(Session session, String message) throws IOException {
-    JoinPlayerCommand joinCommand = gson.fromJson(message, JoinPlayerCommand.class);
+    private void handleJoinPlayer(Session session, String message) throws IOException {
+        JoinPlayerCommand joinCommand = gson.fromJson(message, JoinPlayerCommand.class);
 
-    try {
-        String authToken = joinCommand.getAuthString();
-        AuthData authData = authDAO.getAuth(authToken);
-        if (authData == null) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Invalid auth token.");
-            session.getRemote().sendString(gson.toJson(errorMessage));
-            return;
-        }
-        String playerName = authData.username();
-
-        GameData gameData = gameDAO.getGame(joinCommand.getGameID());
-        if (gameData == null) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Game not found.");
-            session.getRemote().sendString(gson.toJson(errorMessage));
-            return;
-        }
-
-        boolean canJoin = false;
-        if (joinCommand.getPlayerColor() == ChessGame.TeamColor.WHITE) {
-            if (gameData.whiteUsername().equals(playerName)) {
-                canJoin = true;
+        try {
+            String authToken = joinCommand.getAuthString();
+            AuthData authData = authDAO.getAuth(authToken);
+            if (authData == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid auth token.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
             }
-        } else if (joinCommand.getPlayerColor() == ChessGame.TeamColor.BLACK) {
-            if (gameData.blackUsername().equals(playerName)) {
-                canJoin = true;
+            String playerName = authData.username();
+
+            GameData gameData = gameDAO.getGame(joinCommand.getGameID());
+            if (gameData == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Game not found.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
             }
-        }
 
-        if (!canJoin) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Wrong team.");
+            boolean canJoin = false;
+            if (joinCommand.getPlayerColor() == ChessGame.TeamColor.WHITE) {
+                if (gameData.whiteUsername().equals(playerName)) {
+                    canJoin = true;
+                }
+            } else if (joinCommand.getPlayerColor() == ChessGame.TeamColor.BLACK) {
+                if (gameData.blackUsername().equals(playerName)) {
+                    canJoin = true;
+                }
+            }
+
+            if (!canJoin) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Wrong team.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+
+            connections.addConnection(joinCommand.getGameID(), playerName, session);
+            NotificationMessage notificationMessage = new NotificationMessage(String.format("%s has joined as %s.", playerName, joinCommand.getPlayerColor().toString()));
+            connections.broadcast(joinCommand.getGameID(), playerName, gson.toJson(notificationMessage));
+
+            LoadGameMessage loadGameMessage = new LoadGameMessage(gameData.game(), joinCommand.getPlayerColor());
+            session.getRemote().sendString(gson.toJson(loadGameMessage));
+
+        }
+        catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage("Database access error.");
             session.getRemote().sendString(gson.toJson(errorMessage));
-            return;
         }
-
-        connections.addConnection(joinCommand.getGameID(), playerName, session);
-        NotificationMessage notificationMessage = new NotificationMessage(String.format("%s has joined as %s.", playerName, joinCommand.getPlayerColor().toString()));
-        connections.broadcast(joinCommand.getGameID(), playerName, gson.toJson(notificationMessage));
-
-        LoadGameMessage loadGameMessage = new LoadGameMessage(gameData.game(), joinCommand.getPlayerColor());
-        session.getRemote().sendString(gson.toJson(loadGameMessage));
-
-    } catch (DataAccessException e) {
-        ErrorMessage errorMessage = new ErrorMessage("Database access error.");
-        session.getRemote().sendString(gson.toJson(errorMessage));
-    } catch (Exception e) {
-        ErrorMessage errorMessage = new ErrorMessage("An unexpected error occurred.");
-        session.getRemote().sendString(gson.toJson(errorMessage));
+        catch (Exception e) {
+            ErrorMessage errorMessage = new ErrorMessage("An unexpected error occurred.");
+            session.getRemote().sendString(gson.toJson(errorMessage));
+        }
     }
-}
+
+    private void handleJoinObserver(Session session, String message) throws IOException {
+        JoinObserverCommand joinObserverCommand = gson.fromJson(message, JoinObserverCommand.class);
+
+        try{
+            String authToken = joinObserverCommand.getAuthString();
+            AuthData authData = authDAO.getAuth(authToken);
+            if (authData == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid auth token.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+            String observerName = authData.username();
+
+            GameData gameData = gameDAO.getGame(joinObserverCommand.getGameID());
+            if(gameData == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Game not found.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+            connections.addConnection(joinObserverCommand.getGameID(), observerName, session);
+            NotificationMessage notificationMessage = new NotificationMessage(String.format("%s has joined as an observer.", observerName));
+            connections.broadcast(joinObserverCommand.getGameID(), observerName, gson.toJson(notificationMessage));
+
+            LoadGameMessage loadGameMessage = new LoadGameMessage(gameData.game(), null);
+            session.getRemote().sendString(gson.toJson(loadGameMessage));
+
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage("Database access error.");
+            session.getRemote().sendString(gson.toJson(errorMessage));
+        } catch (Exception e) {
+            ErrorMessage errorMessage = new ErrorMessage("An unexpected error occurred.");
+            session.getRemote().sendString(gson.toJson(errorMessage));
+        }
+    }
 
 }
