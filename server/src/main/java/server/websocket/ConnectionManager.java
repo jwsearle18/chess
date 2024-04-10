@@ -20,7 +20,7 @@ public class ConnectionManager {
         }
     }
 
-    public void broadcastToGame(int gameID, String excludePlayerName, String message) {
+    public void broadcast(int gameID, String excludePlayerName, String message) {
         Set<Connection> connections = gameSessions.getOrDefault(gameID, ConcurrentHashMap.newKeySet());
         for (Connection conn : connections) {
             if (!conn.playerName.equals(excludePlayerName)) {

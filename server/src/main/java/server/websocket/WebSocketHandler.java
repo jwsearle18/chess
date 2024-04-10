@@ -2,75 +2,92 @@ package server.websocket;
 
 import java.io.IOException;
 
-import Failures.F400;
-import Failures.F401;
-import Failures.F403;
+import chess.ChessGame;
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
+import dataAccess.*;
+import model.AuthData;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import requests.JoinGameRequest;
-import service.JoinGameService;
-import websocketMessages.serverMessages.ServerMessage;
+import websocketMessages.serverMessages.ErrorMessage;
+import websocketMessages.serverMessages.LoadGameMessage;
+import websocketMessages.serverMessages.NotificationMessage;
 import websocketMessages.userCommands.JoinPlayerCommand;
 import websocketMessages.userCommands.UserGameCommand;
 
 @WebSocket
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
-    private JoinGameService joinGameService = new JoinGameService();
     private final Gson gson = new Gson();
+    private final AuthDAO authDAO = new SQLAuthDAO();
+    private final GameDAO gameDAO = new SQLGameDAO();
 
-    public WebSocketHandler(JoinGameService joinGameService) {
-        this.joinGameService = joinGameService;
+    public WebSocketHandler() throws DataAccessException {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException {
-        UserGameCommand userGameCommand = gson.fromJson(message, UserGameCommand.class);
+    public void onMessage(Session session, String message) throws IOException, DataAccessException {
+        UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
 
-        switch (userGameCommand.getCommandType()) {
+        switch (command.getCommandType()) {
             case JOIN_PLAYER -> {
-                handleJoinPlayer(userGameCommand, session);
+                handleJoinPlayer(session, message);
             }
         }
     }
 
-    private void handleJoinPlayer(UserGameCommand command, Session session) throws IOException {
-        if (!(command instanceof JoinPlayerCommand joinCommand)) {
-            sendError(session, "Invalid command format.");
+private void handleJoinPlayer(Session session, String message) throws IOException {
+    JoinPlayerCommand joinCommand = gson.fromJson(message, JoinPlayerCommand.class);
+
+    try {
+        String authToken = joinCommand.getAuthString();
+        AuthData authData = authDAO.getAuth(authToken);
+        if (authData == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Invalid auth token.");
+            session.getRemote().sendString(gson.toJson(errorMessage));
+            return;
+        }
+        String playerName = authData.username();
+
+        GameData gameData = gameDAO.getGame(joinCommand.getGameID());
+        if (gameData == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Game not found.");
+            session.getRemote().sendString(gson.toJson(errorMessage));
             return;
         }
 
-        JoinGameRequest joinGameRequest = new JoinGameRequest(
-                joinCommand.getAuthString(),
-                joinCommand.getTeamColor(),
-                joinCommand.getGameID());
-
-        try {
-            String playerName = joinGameService.joinGame(joinGameRequest);
-
-            ServerMessage loadGameMessage = new ServerMessage(
-                    ServerMessage.ServerMessageType.LOAD_GAME,
-                    "Game loaded successfully.");
-            session.getRemote().sendString(gson.toJson(loadGameMessage));
-
-            String notificationMessage = String.format("%s joined the game as %s.", playerName, joinCommand.getTeamColor().toString());
-            ServerMessage notification = new ServerMessage(
-                    ServerMessage.ServerMessageType.NOTIFICATION,
-                    notificationMessage);
-
-            // Broadcast to all other clients in the game
-            connections.broadcastToGame(joinCommand.getGameID(), playerName, gson.toJson(notification));
-
-        } catch (F400 | F401 | F403 | DataAccessException e) {
-            sendError(session, "Error: " + e.getMessage());
+        boolean canJoin = false;
+        if (joinCommand.getPlayerColor() == ChessGame.TeamColor.WHITE) {
+            if (gameData.whiteUsername().equals(playerName)) {
+                canJoin = true;
+            }
+        } else if (joinCommand.getPlayerColor() == ChessGame.TeamColor.BLACK) {
+            if (gameData.blackUsername().equals(playerName)) {
+                canJoin = true;
+            }
         }
-    }
 
-    private void sendError(Session session, String message) throws IOException {
-        ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR, message);
+        if (!canJoin) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Wrong team.");
+            session.getRemote().sendString(gson.toJson(errorMessage));
+            return;
+        }
+
+        connections.addConnection(joinCommand.getGameID(), playerName, session);
+        NotificationMessage notificationMessage = new NotificationMessage(String.format("%s has joined as %s.", playerName, joinCommand.getPlayerColor().toString()));
+        connections.broadcast(joinCommand.getGameID(), playerName, gson.toJson(notificationMessage));
+
+        LoadGameMessage loadGameMessage = new LoadGameMessage(gameData.game(), joinCommand.getPlayerColor());
+        session.getRemote().sendString(gson.toJson(loadGameMessage));
+
+    } catch (DataAccessException e) {
+        ErrorMessage errorMessage = new ErrorMessage("Database access error.");
+        session.getRemote().sendString(gson.toJson(errorMessage));
+    } catch (Exception e) {
+        ErrorMessage errorMessage = new ErrorMessage("An unexpected error occurred.");
         session.getRemote().sendString(gson.toJson(errorMessage));
     }
+}
+
 }

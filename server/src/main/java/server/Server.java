@@ -9,10 +9,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import requests.*;
-import results.CreateGameResult;
-import results.ListGamesResult;
-import results.LoginResult;
-import results.RegisterResult;
+import results.*;
 import server.websocket.WebSocketHandler;
 import service.*;
 import spark.*;
@@ -142,8 +139,8 @@ public class Server {
         JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, joinGameBody.playerColor(), joinGameBody.gameID());
         try {
             res.status(200);
-            String playerName = joinGameService.joinGame(joinGameRequest);
-            return "{ \"message\": \"Player " + playerName + " joined the game successfully.\" }";
+            joinGameService.joinGame(joinGameRequest);
+            return "{}";
         } catch (DataAccessException e) {
             res.status(500);
             return "{ \"message\": \"Error: description\" }";
