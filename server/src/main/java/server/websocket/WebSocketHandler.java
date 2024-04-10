@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPiece;
 import com.google.gson.Gson;
 import dataAccess.*;
@@ -35,7 +36,7 @@ public class WebSocketHandler {
             case JOIN_PLAYER -> handleJoinPlayer(session, message);
             case JOIN_OBSERVER -> handleJoinObserver(session, message);
             case MAKE_MOVE -> handleMakeMove(session, message);
-//            case RESIGN -> handleResign(session, message);
+            case RESIGN -> handleResign(session, message);
             case LEAVE -> handleLeave(session, message);
         }
     }
@@ -168,11 +169,25 @@ public class WebSocketHandler {
                 session.getRemote().sendString(gson.toJson(errorMessage));
                 return;
             }
-            if (!game.validMoves(makeMoveCommand.getMove().getStartPosition()).contains(makeMoveCommand.getMove())) {
-                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid move Sarge, try again perhaps.");
+//            if (!game.validMoves(makeMoveCommand.getMove().getStartPosition()).contains(makeMoveCommand.getMove())) {
+//                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid move, Sarge, try again perhaps.");
+//                session.getRemote().sendString(gson.toJson(errorMessage));
+//                return;
+//            }
+            boolean isValidMove = false;
+            for (ChessMove validMove : game.validMoves(makeMoveCommand.getMove().getStartPosition())) {
+                if (areMovesEquivalent(makeMoveCommand.getMove(), validMove)) {
+                    isValidMove = true;
+                    break;
+                }
+            }
+
+            if (!isValidMove) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid move, Sarge, try again perhaps.");
                 session.getRemote().sendString(gson.toJson(errorMessage));
                 return;
             }
+
 
             game.makeMove(makeMoveCommand.getMove());
             gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game));
@@ -191,48 +206,59 @@ public class WebSocketHandler {
             session.getRemote().sendString(gson.toJson(errorMessage));
         }
     }
+    private boolean areMovesEquivalent(ChessMove move1, ChessMove move2) {
+        if (!move1.getStartPosition().equals(move2.getStartPosition())) return false;
+        if (!move1.getEndPosition().equals(move2.getEndPosition())) return false;
+        return (move1.getPromotionPiece() == null && move2.getPromotionPiece() == null) ||
+                (move1.getPromotionPiece() != null && move1.getPromotionPiece().equals(move2.getPromotionPiece()));
+    }
 
-//    public void handleResign(Session session, String message) throws IOException {
-//        ResignCommand resignCommand = gson.fromJson(message, ResignCommand.class);
-//
-//        try {
-//            String authToken = resignCommand.getAuthString();
-//            AuthData authData = authDAO.getAuth(authToken);
-//            if (authData == null) {
-//                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid auth token.");
-//                session.getRemote().sendString(gson.toJson(errorMessage));
-//                return;
-//            }
-//            String playerName = authData.username();
-//
-//            GameData gameData = gameDAO.getGame(resignCommand.getGameID());
-//            if(gameData == null) {
-//                ErrorMessage errorMessage = new ErrorMessage("Error: Game not found.");
-//                session.getRemote().sendString(gson.toJson(errorMessage));
-//                return;
-//            }
-//
-//            if (gameData.game().getGameStatus() == ChessGame.GameStatus.INACTIVE) {
-//                ErrorMessage errorMessage = new ErrorMessage("Error: Game not Active.");
-//                session.getRemote().sendString(gson.toJson(errorMessage));
-//                return;
-//            }
-//            ChessGame newInactiveGame = gameData.game();
-//            newInactiveGame.setGameStatus(ChessGame.GameStatus.INACTIVE);
-//            gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), newInactiveGame));
-//
-//
-//
-//
-//            connections.removeConnection(gameData.gameID(), playerName);
-//            NotificationMessage notificationMessage = new NotificationMessage(String.format("%s has resigned.", playerName));
-//            connections.broadcast(resignCommand.getGameID(), playerName, gson.toJson(notificationMessage));
-//
-//        } catch (DataAccessException e) {
-//            ErrorMessage errorMessage = new ErrorMessage("Database access error.");
-//            session.getRemote().sendString(gson.toJson(errorMessage));
-//        }
-//    }
+    public void handleResign(Session session, String message) throws IOException {
+        ResignCommand resignCommand = gson.fromJson(message, ResignCommand.class);
+
+        try {
+            String authToken = resignCommand.getAuthString();
+            AuthData authData = authDAO.getAuth(authToken);
+            if (authData == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid auth token.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+            String playerName = authData.username();
+
+            GameData gameData = gameDAO.getGame(resignCommand.getGameID());
+            if(gameData == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Game not found.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+
+            if (gameData.game().getGameStatus() == ChessGame.GameStatus.INACTIVE) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Game not Active.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+
+            if (!playerName.equals(gameData.whiteUsername()) && !playerName.equals(gameData.blackUsername())) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Observers cannot resign.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+
+            ChessGame newInactiveGame = gameData.game();
+            newInactiveGame.setGameStatus(ChessGame.GameStatus.INACTIVE);
+            gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), newInactiveGame));
+
+
+            connections.removeConnection(gameData.gameID(), playerName);
+            NotificationMessage notificationMessage = new NotificationMessage(String.format("%s has resigned.", playerName));
+            connections.broadcast(resignCommand.getGameID(), playerName, gson.toJson(notificationMessage));
+
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage("Database access error.");
+            session.getRemote().sendString(gson.toJson(errorMessage));
+        }
+    }
 
     public void handleLeave(Session session, String message) throws IOException {
         LeaveCommand leaveCommand = gson.fromJson(message, LeaveCommand.class);
