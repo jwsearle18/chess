@@ -1,6 +1,7 @@
 package server.websocket;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
@@ -15,6 +16,7 @@ import websocketMessages.serverMessages.LoadGameMessage;
 import websocketMessages.serverMessages.NotificationMessage;
 import websocketMessages.userCommands.JoinObserverCommand;
 import websocketMessages.userCommands.JoinPlayerCommand;
+import websocketMessages.userCommands.LeaveCommand;
 import websocketMessages.userCommands.UserGameCommand;
 
 @WebSocket
@@ -34,6 +36,7 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case JOIN_PLAYER -> handleJoinPlayer(session, message);
             case JOIN_OBSERVER -> handleJoinObserver(session, message);
+            case LEAVE -> handleLeave(session, message);
         }
     }
 
@@ -126,5 +129,47 @@ public class WebSocketHandler {
             session.getRemote().sendString(gson.toJson(errorMessage));
         }
     }
+
+    public void handleLeave(Session session, String message) throws IOException {
+        LeaveCommand leaveCommand = gson.fromJson(message, LeaveCommand.class);
+
+        try {
+            String authToken = leaveCommand.getAuthString();
+            AuthData authData = authDAO.getAuth(authToken);
+            if (authData == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid auth token.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+            String playerName = authData.username();
+
+            GameData gameData = gameDAO.getGame(leaveCommand.getGameID());
+            if(gameData == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Game not found.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+            String whiteName = gameData.whiteUsername();
+            String blackName = gameData.blackUsername();
+            if (Objects.equals(playerName, whiteName)) {
+                GameData whiteLeftGame = new GameData(gameData.gameID(), null, blackName, gameData.gameName(), gameData.game());
+                gameDAO.updateGame(whiteLeftGame);
+            } else if (Objects.equals(playerName, blackName)) {
+                GameData blackLeftGame = new GameData(gameData.gameID(), whiteName, null, gameData.gameName(), gameData.game());
+                gameDAO.updateGame(blackLeftGame);
+            }
+            connections.removeConnection(gameData.gameID(), playerName);
+            NotificationMessage notificationMessage = new NotificationMessage(String.format("%s has left the game.", playerName));
+            connections.broadcast(leaveCommand.getGameID(), playerName, gson.toJson(notificationMessage));
+
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage("Database access error.");
+            session.getRemote().sendString(gson.toJson(errorMessage));
+        } catch (Exception e) {
+            ErrorMessage errorMessage = new ErrorMessage("An unexpected error occurred.");
+            session.getRemote().sendString(gson.toJson(errorMessage));
+        }
+    }
+
 
 }
