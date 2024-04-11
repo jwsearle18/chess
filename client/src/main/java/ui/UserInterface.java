@@ -25,6 +25,7 @@ public class UserInterface {
         try {
             NotificationHandler notificationHandler = new NotificationHandlerImplementation(this);
             ws = new WebSocketFacade(url, notificationHandler);
+
         } catch (Exception e) {
             displayError("Failed to initialize WebSocket connection: " + e.getMessage());
         }
@@ -32,28 +33,52 @@ public class UserInterface {
 
     public void start() {
         printWelcomeMessage();
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (true) {
-//                if (currentState == State.IN_GAME) {
-//                    //don't print prompt till after chessboard
-//                } else {
-                    System.out.printf("[%s] >>> ", currentState.name());
-
-                String command = scanner.nextLine().trim();
-                commandHandler.handleCommand(command, currentState);
-//                if (currentState == State.IN_GAME) {
+        tick();
+//        Scanner scanner = new Scanner(System.in);
+//        try {
+//            do {
+////                System.out.println(currentState);
+//                if (currentState != State.CONNECTING) {
+//                    // Process commands and update the UI
+////                if (currentState != State.IN_GAME) {
 //                    System.out.printf("[%s] >>> ", currentState.name());
+////                }
+//                    String command = scanner.nextLine().trim();
+//                    commandHandler.handleCommand(command, currentState);
 //                }
-            }
-        }
+//
+//            } while (true);  // or some condition to allow exit
+//        } finally {
+//            scanner.close();
+//        }
     }
 
     public void setCurrentState(State newState) {
-        this.currentState = newState;
+        currentState = newState;
     }
 
     private void printWelcomeMessage() {
         System.out.println("Welcome to 240 Chess! Type 'help' to get started.");
+    }
+
+    public void tick() {
+        Scanner scanner = new Scanner(System.in);
+        try {
+
+//                System.out.println(currentState);
+                if (currentState != State.CONNECTING) {
+                    // Process commands and update the UI
+//                if (currentState != State.IN_GAME) {
+                    System.out.printf("[%s] >>> ", currentState.name());
+//                }
+                    String command = scanner.nextLine().trim();
+                    commandHandler.handleCommand(command, currentState);
+                }
+
+                tick();
+        } finally {
+            scanner.close();
+        }
     }
 
     public void joinPlayer(String authToken, int gameID, ChessGame.TeamColor playerColor) {
@@ -68,20 +93,41 @@ public class UserInterface {
         }
     }
 
-    public void updateChessBoard(ChessGame game, ChessGame.TeamColor playerColor) {
-        ChessBoard board = game.getBoard();
-        boolean whiteAtBottom = playerColor == ChessGame.TeamColor.WHITE;
-        DrawChessBoard.printChessBoards(System.out, board, whiteAtBottom);
-        if (currentState == State.IN_GAME) {
-            System.out.printf("[%s] >>> ", currentState.name());
+    public void joinObserver(String authToken, int gameID) {
+        try {
+            if (ws == null) {
+                displayError("WebSocket is not initialized.");
+                return;
+            }
+            ws.joinObserver(authToken, gameID);
+            System.out.println("You are now observing the game.");
+        } catch (Exception e) {
+            displayError("Error sending observe command: " + e.getMessage());
         }
     }
 
+    public void updateChessBoard(ChessGame game, ChessGame.TeamColor playerColor) {
+
+        ChessBoard board = game.getBoard();
+        boolean whiteAtBottom = playerColor == ChessGame.TeamColor.WHITE;
+        DrawChessBoard.printChessBoards(System.out, board, whiteAtBottom);
+
+//        if(currentState !=State.IN_GAME) {
+//            currentState = State.IN_GAME;
+//        }
+    }
+
     public void displayError(String errorMessage) {
-        System.out.println(errorMessage);
+        System.out.println("\n" + errorMessage);
+        System.out.printf("[%s] >>> ", currentState.name());
     }
 
     public void displayNotification(String notificationMessage) {
-        System.out.println(notificationMessage);
+        System.out.println("\n" + notificationMessage);
+        System.out.printf("[%s] >>> ", currentState.name());
+    }
+
+    public void printPrompt() {
+        System.out.printf("[%s] >>> ", currentState.name());
     }
 }

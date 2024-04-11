@@ -107,14 +107,15 @@ public class CommandHandler {
                 System.out.println("Invalid game number.");
                 return;
             }
-
+            String authToken = httpClient.getAuthToken();
             String response = httpClient.joinGame(gameID, null);
             System.out.println(response);
 
             if (response.contains("Successfully joined game!")) {
-                ChessBoard board = new ChessBoard();
-                board.resetBoard();
-                printChessBoards(System.out, board, true);
+                ui.setCurrentState(State.CONNECTING);
+                ui.initializeWebSocket(httpClient.getServerURL());
+
+                ui.joinObserver(authToken, gameID);
             }
         }
     }
@@ -130,14 +131,10 @@ public class CommandHandler {
         String response = httpClient.joinGame(gameID, color);
         System.out.println(response);
         if (response.contains("Successfully joined game")) {
-            ui.setCurrentState(State.IN_GAME);
-            ui.initializeWebSocket("ws://localhost:4040");
+            ui.setCurrentState(State.CONNECTING);
+            ui.initializeWebSocket(httpClient.getServerURL());
             ChessGame.TeamColor playerColor = color.equalsIgnoreCase("white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
             ui.joinPlayer(authToken, gameID, playerColor);
-//            ChessBoard board = new ChessBoard();
-//            board.resetBoard();
-//            boolean whiteAtBottom = color.equalsIgnoreCase("white");
-//            printChessBoards(System.out, board, whiteAtBottom);
         }
     }
 

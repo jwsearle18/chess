@@ -16,8 +16,6 @@ import java.util.Objects;
 import static java.util.Objects.isNull;
 
 public class JoinGameService {
-//    private final GameDAO gameDAO;
-//    private final AuthDAO authDAO;
 
     public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException, F400, F401, F403 {
         GameDAO gameDAO = new SQLGameDAO();

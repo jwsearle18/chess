@@ -14,10 +14,14 @@ import java.net.URL;
 public class ServerFacade {
     private final String serverURL;
 
+
     private String authToken = null;
 
     public ServerFacade(int port) {
         this.serverURL = "http://localhost:" + port;
+    }
+    public String getServerURL() {
+        return serverURL;
     }
 
     public void clearAuthToken() {

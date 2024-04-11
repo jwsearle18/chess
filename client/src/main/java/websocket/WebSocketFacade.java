@@ -3,10 +3,12 @@ package websocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.AuthData;
+import ui.WebSocketEventCallbacks;
 import websocketMessages.serverMessages.ErrorMessage;
 import websocketMessages.serverMessages.LoadGameMessage;
 import websocketMessages.serverMessages.NotificationMessage;
 import websocketMessages.serverMessages.ServerMessage;
+import websocketMessages.userCommands.JoinObserverCommand;
 import websocketMessages.userCommands.JoinPlayerCommand;
 
 import javax.websocket.*;
@@ -21,6 +23,7 @@ public class WebSocketFacade extends Endpoint {
 
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler) throws Exception {
+
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/connect");
@@ -62,13 +65,15 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void joinPlayer(String authToken, Integer gameID, ChessGame.TeamColor playerColor) throws Exception {
-        try {
-            var joinPlayerCommand = new JoinPlayerCommand(authToken, gameID, playerColor);
-            this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayerCommand));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void joinPlayer(String authToken, Integer gameID, ChessGame.TeamColor playerColor) throws IOException {
+        var joinPlayerCommand = new JoinPlayerCommand(authToken, gameID, playerColor);
+        this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayerCommand));
+    }
+
+    public void joinObserver(String authToken, Integer gameID) throws IOException {
+        var joinObserverCommand = new JoinObserverCommand(authToken, gameID);
+        this.session.getBasicRemote().sendText(new Gson().toJson(joinObserverCommand));
+
     }
 
     public void closeSession() throws IOException {
