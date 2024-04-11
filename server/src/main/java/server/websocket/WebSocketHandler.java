@@ -179,6 +179,12 @@ public class WebSocketHandler {
                 return;
             }
 
+            if (gameData.game().getGameStatus() == ChessGame.GameStatus.INACTIVE) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Game not Active.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+
             game.makeMove(makeMoveCommand.getMove());
             gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game));
 
