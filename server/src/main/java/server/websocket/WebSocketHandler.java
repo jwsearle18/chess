@@ -1,11 +1,13 @@
 package server.websocket;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
 
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.AuthData;
@@ -169,7 +171,9 @@ public class WebSocketHandler {
                 session.getRemote().sendString(gson.toJson(errorMessage));
                 return;
             }
-            if (!game.validMoves(makeMoveCommand.getMove().getStartPosition()).contains(makeMoveCommand.getMove())) {
+            ChessPosition startPos = makeMoveCommand.getMove().getStartPosition();
+            Collection<ChessMove> validMoves = game.validMoves(startPos);
+            if (!validMoves.contains(makeMoveCommand.getMove())) {
                 ErrorMessage errorMessage = new ErrorMessage("Error: Invalid move, Sarge, try again perhaps.");
                 session.getRemote().sendString(gson.toJson(errorMessage));
                 return;
@@ -231,9 +235,10 @@ public class WebSocketHandler {
             gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), newInactiveGame));
 
 
-            connections.removeConnection(gameData.gameID(), playerName);
+
             NotificationMessage notificationMessage = new NotificationMessage(String.format("%s has resigned.", playerName));
-            connections.broadcast(resignCommand.getGameID(), playerName, gson.toJson(notificationMessage));
+            connections.broadcast(resignCommand.getGameID(), null, gson.toJson(notificationMessage));
+            connections.removeConnection(gameData.gameID(), playerName);
 
         } catch (DataAccessException e) {
             ErrorMessage errorMessage = new ErrorMessage("Database access error.");
