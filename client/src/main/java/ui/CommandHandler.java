@@ -1,10 +1,12 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import websocket.WebSocketFacade;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -124,14 +126,18 @@ public class CommandHandler {
             System.out.println("Invalid game number.");
             return;
         }
-
+        String authToken = httpClient.getAuthToken();
         String response = httpClient.joinGame(gameID, color);
         System.out.println(response);
         if (response.contains("Successfully joined game")) {
-            ChessBoard board = new ChessBoard();
-            board.resetBoard();
-            boolean whiteAtBottom = color.equalsIgnoreCase("white");
-            printChessBoards(System.out, board, whiteAtBottom);
+            ui.setCurrentState(State.IN_GAME);
+            ui.initializeWebSocket("ws://localhost:4040");
+            ChessGame.TeamColor playerColor = color.equalsIgnoreCase("white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            ui.joinPlayer(authToken, gameID, playerColor);
+//            ChessBoard board = new ChessBoard();
+//            board.resetBoard();
+//            boolean whiteAtBottom = color.equalsIgnoreCase("white");
+//            printChessBoards(System.out, board, whiteAtBottom);
         }
     }
 
@@ -219,6 +225,16 @@ public class CommandHandler {
                         observe <ID> - a game
                         logout - when you are done
                         quit - playing chess
+                        help - with possible commands
+                        """);
+            }
+            case IN_GAME -> {
+                System.out.println("""
+                        redraw - chess board
+                        highlight <Position>- legal moves
+                        move <START POSITION> <END POSITION> - Make a chess move
+                        leave - current game
+                        resign - the game
                         help - with possible commands
                         """);
             }

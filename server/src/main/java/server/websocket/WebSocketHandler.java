@@ -244,7 +244,6 @@ public class WebSocketHandler {
 
             NotificationMessage notificationMessage = new NotificationMessage(String.format("%s has resigned.", playerName));
             connections.broadcast(resignCommand.getGameID(), null, gson.toJson(notificationMessage));
-            connections.removeConnection(gameData.gameID(), playerName);
 
         } catch (DataAccessException e) {
             ErrorMessage errorMessage = new ErrorMessage("Database access error.");

@@ -14,4 +14,7 @@ public class LoadGameMessage extends ServerMessage {
     public ChessGame getGame() {
         return game;
     }
+    public ChessGame.TeamColor getPlayerColor() {
+        return playerColor;
+    }
 }

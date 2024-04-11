@@ -2,6 +2,8 @@ package ui;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -20,6 +22,10 @@ public class ServerFacade {
 
     public void clearAuthToken() {
         this.authToken = null;
+    }
+
+    public String getAuthToken() {
+        return this.authToken;
     }
 
     private String sendHttpRequest(String path, String method, String content, boolean needsAuth) {
