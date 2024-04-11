@@ -3,7 +3,6 @@ package websocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.AuthData;
-import ui.WebSocketEventCallbacks;
 import websocketMessages.serverMessages.ErrorMessage;
 import websocketMessages.serverMessages.LoadGameMessage;
 import websocketMessages.serverMessages.NotificationMessage;

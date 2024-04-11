@@ -1,5 +1,6 @@
 package websocket;
 
+import chess.ChessGame;
 import ui.State;
 import ui.UserInterface;
 import websocketMessages.serverMessages.ErrorMessage;
@@ -14,7 +15,11 @@ public class NotificationHandlerImplementation implements NotificationHandler{
     }
     @Override
     public void handleLoadGame(LoadGameMessage message) {
-        ui.updateChessBoard(message.getGame(), message.getPlayerColor());
+        ChessGame.TeamColor displayColor = message.getPlayerColor();
+        if (displayColor == null) {
+            displayColor = ChessGame.TeamColor.WHITE;
+        }
+        ui.updateChessBoard(message.getGame(), displayColor);
         ui.setCurrentState(State.IN_GAME);
     }
     @Override

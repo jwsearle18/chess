@@ -114,7 +114,6 @@ public class CommandHandler {
             if (response.contains("Successfully joined game!")) {
                 ui.setCurrentState(State.CONNECTING);
                 ui.initializeWebSocket(httpClient.getServerURL());
-
                 ui.joinObserver(authToken, gameID);
             }
         }
@@ -203,6 +202,7 @@ public class CommandHandler {
             System.out.println(response);
         }
     }
+
 
     private void help(State currentState) {
         switch (currentState) {

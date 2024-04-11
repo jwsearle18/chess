@@ -34,23 +34,6 @@ public class UserInterface {
     public void start() {
         printWelcomeMessage();
         tick();
-//        Scanner scanner = new Scanner(System.in);
-//        try {
-//            do {
-////                System.out.println(currentState);
-//                if (currentState != State.CONNECTING) {
-//                    // Process commands and update the UI
-////                if (currentState != State.IN_GAME) {
-//                    System.out.printf("[%s] >>> ", currentState.name());
-////                }
-//                    String command = scanner.nextLine().trim();
-//                    commandHandler.handleCommand(command, currentState);
-//                }
-//
-//            } while (true);  // or some condition to allow exit
-//        } finally {
-//            scanner.close();
-//        }
     }
 
     public void setCurrentState(State newState) {
@@ -65,12 +48,9 @@ public class UserInterface {
         Scanner scanner = new Scanner(System.in);
         try {
 
-//                System.out.println(currentState);
                 if (currentState != State.CONNECTING) {
-                    // Process commands and update the UI
-//                if (currentState != State.IN_GAME) {
                     System.out.printf("[%s] >>> ", currentState.name());
-//                }
+
                     String command = scanner.nextLine().trim();
                     commandHandler.handleCommand(command, currentState);
                 }
@@ -112,9 +92,6 @@ public class UserInterface {
         boolean whiteAtBottom = playerColor == ChessGame.TeamColor.WHITE;
         DrawChessBoard.printChessBoards(System.out, board, whiteAtBottom);
 
-//        if(currentState !=State.IN_GAME) {
-//            currentState = State.IN_GAME;
-//        }
     }
 
     public void displayError(String errorMessage) {
@@ -127,7 +104,4 @@ public class UserInterface {
         System.out.printf("[%s] >>> ", currentState.name());
     }
 
-    public void printPrompt() {
-        System.out.printf("[%s] >>> ", currentState.name());
-    }
 }
