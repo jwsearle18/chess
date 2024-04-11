@@ -9,6 +9,7 @@ import websocketMessages.serverMessages.NotificationMessage;
 import websocketMessages.serverMessages.ServerMessage;
 import websocketMessages.userCommands.JoinObserverCommand;
 import websocketMessages.userCommands.JoinPlayerCommand;
+import websocketMessages.userCommands.LeaveCommand;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -62,6 +63,11 @@ public class WebSocketFacade extends Endpoint {
                 notificationHandler.handleNotification(notificationMessage);
             }
         }
+    }
+
+    public void leaveGame(String authToken, int gameID) throws IOException {
+        LeaveCommand leaveCommand = new LeaveCommand(authToken, gameID);
+        session.getBasicRemote().sendText(new  Gson().toJson(leaveCommand));
     }
 
     public void joinPlayer(String authToken, Integer gameID, ChessGame.TeamColor playerColor) throws IOException {

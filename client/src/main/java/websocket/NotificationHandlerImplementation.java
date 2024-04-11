@@ -8,7 +8,7 @@ import websocketMessages.serverMessages.LoadGameMessage;
 import websocketMessages.serverMessages.NotificationMessage;
 
 public class NotificationHandlerImplementation implements NotificationHandler{
-    private UserInterface ui;
+    private final UserInterface ui;
 
     public NotificationHandlerImplementation(UserInterface ui) {
         this.ui = ui;

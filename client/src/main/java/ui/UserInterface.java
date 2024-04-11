@@ -6,6 +6,7 @@ import websocket.NotificationHandler;
 import websocket.NotificationHandlerImplementation;
 import websocket.WebSocketFacade;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.WeakHashMap;
 
@@ -13,9 +14,14 @@ import static ui.EscapeSequences.*;
 
 public class UserInterface {
     private State currentState = State.LOGGED_OUT;
+    private Integer currentGameID = null;
 
     private final CommandHandler commandHandler;
     private WebSocketFacade ws;
+    public void setCurrentGameID(Integer gameID) {
+        this.currentGameID = gameID;
+    }
+
 
     public UserInterface(int port) {
         this.commandHandler = new CommandHandler(this, port);
@@ -45,19 +51,35 @@ public class UserInterface {
     }
 
     public void tick() {
-        Scanner scanner = new Scanner(System.in);
+        try (Scanner scanner = new Scanner(System.in)) {
+
+            if (currentState != State.CONNECTING) {
+                System.out.printf("[%s] >>> ", currentState.name());
+
+                String command = scanner.nextLine().trim();
+                commandHandler.handleCommand(command, currentState);
+            }
+
+            tick();
+        }
+    }
+
+    public void leaveGame() {
+        if (currentGameID == null) {
+            displayError("You are not currently in a game.");
+        }
         try {
-
-                if (currentState != State.CONNECTING) {
-                    System.out.printf("[%s] >>> ", currentState.name());
-
-                    String command = scanner.nextLine().trim();
-                    commandHandler.handleCommand(command, currentState);
-                }
-
-                tick();
-        } finally {
-            scanner.close();
+            if (ws == null) {
+                displayError("WebSocket is not initialized.");
+                return;
+            }
+            String authToken = commandHandler.getHttpClient().getAuthToken();
+            ws.leaveGame(authToken, currentGameID);
+            setCurrentState(State.LOGGED_IN);
+            setCurrentGameID(null);
+            System.out.println("You have left the game.");
+        } catch (Exception e) {
+            displayError(e.getMessage());
         }
     }
 

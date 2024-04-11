@@ -18,6 +18,10 @@ public class CommandHandler {
     private final ServerFacade httpClient;
     private Map<Integer, Integer> gameNumbertoGameID = new HashMap<>();
 
+    public ServerFacade getHttpClient() {
+        return httpClient;
+    }
+
     public CommandHandler(UserInterface ui, int port) {
         this.ui = ui;
         this.httpClient = new ServerFacade(port);
@@ -94,8 +98,32 @@ public class CommandHandler {
                     }
                 }
             }
+            case "leave" -> {
+                if (currentState == State.IN_GAME) {
+                    leaveGame();
+                } else {
+                    System.out.println("You are not in a game to leave.");
+                }
+            }
             default -> System.out.println("Unknown command.");
         }
+    }
+
+    private void leaveGame() {
+//        Integer gameID = ui.getCurrentGameID();
+//        if(gameID == null) {
+//            System.out.println("You are not currently in a game.");
+//            return;
+//        }
+//            String authToken = httpClient.getAuthToken();
+//            if (authToken == null) {
+//                System.out.println("Authentication required to leave game.");
+//                return;
+//            }
+//
+//            ui.leaveGame();
+        ui.leaveGame();
+
     }
 
     private void observeGame(int gameNumber) {
@@ -113,6 +141,7 @@ public class CommandHandler {
 
             if (response.contains("Successfully joined game!")) {
                 ui.setCurrentState(State.CONNECTING);
+                ui.setCurrentGameID(gameID);
                 ui.initializeWebSocket(httpClient.getServerURL());
                 ui.joinObserver(authToken, gameID);
             }
@@ -131,6 +160,7 @@ public class CommandHandler {
         System.out.println(response);
         if (response.contains("Successfully joined game")) {
             ui.setCurrentState(State.CONNECTING);
+            ui.setCurrentGameID(gameID);
             ui.initializeWebSocket(httpClient.getServerURL());
             ChessGame.TeamColor playerColor = color.equalsIgnoreCase("white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
             ui.joinPlayer(authToken, gameID, playerColor);
