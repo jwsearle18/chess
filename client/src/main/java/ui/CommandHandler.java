@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import static ui.DrawChessBoard.printChessBoards;
 
@@ -141,7 +142,46 @@ public class CommandHandler {
                     System.out.println("You must be in a game to highlight moves.");
                 }
             }
+            case "resign" -> {
+                if (currentState == State.IN_GAME) {
+                    confirmAndResign();
+                } else {
+                    System.out.println("You can only resign during a game.");
+                }
+            }
             default -> System.out.println("Unknown command.");
+        }
+    }
+
+    private void confirmAndResign() {
+        System.out.print("Are you sure you want to resign? (yes/no) >>> ");
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        while (true) {
+            input = scanner.nextLine().trim().toLowerCase();
+            if ("yes".equals(input)) {
+                try {
+                    String authToken = httpClient.getAuthToken();
+                    Integer currentGameID = ui.getCurrentGameID();
+                    if (currentGameID != null) {
+                        ui.getWs().resignGame(authToken, currentGameID);
+                        System.out.println("You resigned.");
+                        break;
+                    } else {
+                        System.out.println("Error: No current game ID found.");
+                        break;
+                    }
+                } catch (IOException e) {
+                    ui.displayError("Failed to send resign command: " + e.getMessage());
+                    break;
+                }
+            } else if ("no".equals(input)) {
+                System.out.println("Resignation canceled.");
+                break;
+            } else {
+                System.out.print("Invalid Command, please try again (yes/no) >>> ");
+            }
         }
     }
 
@@ -156,7 +196,7 @@ public class CommandHandler {
                     ui.highlightMoves(moves);
                 }
                 else {
-                    ui.displayError("That's not your piece bucko!");
+                    ui.displayError("Nice try bucko, that's not your piece!");
                 }
             } else {
                 ui.displayError("You don't have a piece there pal!");

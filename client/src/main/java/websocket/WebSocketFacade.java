@@ -8,10 +8,7 @@ import websocketMessages.serverMessages.ErrorMessage;
 import websocketMessages.serverMessages.LoadGameMessage;
 import websocketMessages.serverMessages.NotificationMessage;
 import websocketMessages.serverMessages.ServerMessage;
-import websocketMessages.userCommands.JoinObserverCommand;
-import websocketMessages.userCommands.JoinPlayerCommand;
-import websocketMessages.userCommands.LeaveCommand;
-import websocketMessages.userCommands.MakeMoveCommand;
+import websocketMessages.userCommands.*;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -65,6 +62,11 @@ public class WebSocketFacade extends Endpoint {
                 notificationHandler.handleNotification(notificationMessage);
             }
         }
+    }
+
+    public void resignGame(String authToken, int gameID) throws IOException {
+        ResignCommand resignCommand = new ResignCommand(authToken, gameID);
+        session.getBasicRemote().sendText(new Gson().toJson(resignCommand));
     }
 
     public void makeMove(String authToken, Integer gameID, ChessMove move) throws IOException {
