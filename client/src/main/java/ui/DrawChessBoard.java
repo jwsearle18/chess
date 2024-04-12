@@ -6,6 +6,7 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.io.PrintStream;
+import java.util.Set;
 
 import static ui.EscapeSequences.*;
 
@@ -15,15 +16,21 @@ public class DrawChessBoard {
 
     public static void printChessBoards(PrintStream out, ChessBoard board, boolean whiteAtBottom) {
         System.out.print("\n");
-        draw(out, board, whiteAtBottom);
+        draw(out, board, whiteAtBottom, null);
     }
-    public static void draw(PrintStream out, ChessBoard board, boolean whiteAtBottom) {
+
+    public static void printChessBoardWithHighlights(PrintStream out, ChessBoard board, boolean whiteAtBottom, Set<ChessPosition> highlightPositions) {
+        System.out.print("\n");
+        draw(out, board, whiteAtBottom, highlightPositions);
+    }
+
+    public static void draw(PrintStream out, ChessBoard board, boolean whiteAtBottom, Set<ChessPosition> highlightPositions) {
 
         out.print(RESET_BG_COLOR);
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(ERASE_SCREEN);
 
-        drawBoard(out, board, whiteAtBottom);
+        drawBoard(out, board, whiteAtBottom, highlightPositions);
         out.print(moveCursorToLocation(0, BOARD_SIZE_IN_SQUARES + 3));
 
         out.print(RESET_BG_COLOR);
@@ -40,7 +47,7 @@ public class DrawChessBoard {
 
     }
 
-    public static void drawBoard(PrintStream out, ChessBoard board, boolean whiteAtBottom) {
+    public static void drawBoard(PrintStream out, ChessBoard board, boolean whiteAtBottom, Set<ChessPosition> highlightPositions) {
         printColumnLabel(out, whiteAtBottom);
         for (int row = 0; row < BOARD_SIZE_IN_SQUARES; row++) {
             int rowLabel = whiteAtBottom ? (8 - row) : (row + 1);
@@ -49,19 +56,23 @@ public class DrawChessBoard {
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
                     int actualRow = whiteAtBottom ? 7 - row : row;
                     ChessPiece piece = board.getPiece(new ChessPosition(actualRow + 1, col + 1));
-                    drawSquare(out, row, col, whiteAtBottom, piece);
+                    drawSquare(out, row, col, whiteAtBottom, piece, highlightPositions);
             }
             out.println(SET_BG_COLOR_LIGHT_GREY + " " + rowLabel + " " + RESET_BG_COLOR);
         }
         printColumnLabel(out, whiteAtBottom);
     }
 
-    public static void drawSquare(PrintStream out, int row, int col, boolean whiteAtBottom, ChessPiece piece) {
+    public static void drawSquare(PrintStream out, int row, int col, boolean whiteAtBottom, ChessPiece piece, Set<ChessPosition> highlightPositions) {
+        ChessPosition currentPosition = new ChessPosition(whiteAtBottom ? 8 - row : row + 1, col + 1);
+        boolean isHighlight = highlightPositions != null && highlightPositions.contains(currentPosition);
+
         boolean isLightSquare = (row + col) % 2 == 0;
         if(!whiteAtBottom) {
             isLightSquare = (row + col) % 2 != 0;
         }
-        String bgColor = isLightSquare ? SET_BG_COLOR_WHITE : SET_BG_COLOR_MAGENTA;
+        String bgColor = isHighlight ? SET_BG_COLOR_GREEN :
+                isLightSquare ? SET_BG_COLOR_WHITE : SET_BG_COLOR_MAGENTA;
         out.print(bgColor);
 
         String pieceSymbol = piece != null ? getPieceSymbol(piece) : EMPTY;

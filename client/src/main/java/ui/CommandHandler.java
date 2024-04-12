@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,6 +9,7 @@ import websocket.WebSocketFacade;
 import websocketMessages.serverMessages.ErrorMessage;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -127,9 +125,45 @@ public class CommandHandler {
                     System.out.println("You can only redraw the board during a game.");
                 }
             }
+            case "highlight" -> {
+                if (currentState == State.IN_GAME) {
+                    if (parts.length != 2) {
+                        System.out.println("Usage: highlight <POSITION>");
+                    } else {
+                        String position = parts[1].toLowerCase();
+                        if (isValidPosition(position)) {
+                            highlight(position);
+                        } else {
+                            System.out.println("Invalid position. Position should be from 'a1' to 'h8'.");
+                        }
+                    }
+                } else {
+                    System.out.println("You must be in a game to highlight moves.");
+                }
+            }
             default -> System.out.println("Unknown command.");
         }
     }
+
+    private void highlight(String position) {
+        ChessPosition chessPosition = convertToChessPosition(position);
+        ChessGame game = ui.getCurrentGame();
+        if (game != null) {
+            ChessPiece piece = game.getBoard().getPiece(chessPosition);
+            if (piece != null) {
+                if (piece.getTeamColor() == ui.getCurrentDisplayColor()) {
+                    Collection<ChessMove> moves = game.validMoves(chessPosition);
+                    ui.highlightMoves(moves);
+                }
+                else {
+                    ui.displayError("That's not your piece bucko!");
+                }
+            } else {
+                ui.displayError("You don't have a piece there pal!");
+            }
+        }
+    }
+
 
     private void redraw() {
         ui.redrawBoard();
@@ -298,7 +332,7 @@ public class CommandHandler {
             case IN_GAME -> {
                 System.out.println("""
                         redraw - chess board
-                        highlight <Position>- legal moves
+                        highlight <POSITION> - legal moves
                         move <START POSITION> <END POSITION> - Make a chess move
                         leave - current game
                         resign - the game

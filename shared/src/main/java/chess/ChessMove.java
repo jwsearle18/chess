@@ -59,10 +59,15 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "CM{" +
-                "S=" + startPosition +
-                ", E=" + endPosition +
-                ", P=" + promotionPiece +
-                '}';
+//        return "CM{" +
+//                "S=" + startPosition +
+//                ", E=" + endPosition +
+//                ", P=" + promotionPiece +
+//                '}';
+        char startColumn = (char) ('a' + startPosition.getColumn() - 1);
+        char endColumn = (char) ('a' + endPosition.getColumn() - 1);
+        // Builds the string in the format "f7 f6"
+        return "" + startColumn + startPosition.getRow() + " " + endColumn + endPosition.getRow();
     }
+
 }

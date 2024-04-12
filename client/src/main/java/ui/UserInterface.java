@@ -2,13 +2,18 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import websocket.NotificationHandler;
 import websocket.NotificationHandlerImplementation;
 import websocket.WebSocketFacade;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 import static ui.EscapeSequences.*;
 
@@ -100,6 +105,33 @@ public class UserInterface {
             }
         }
     }
+
+    public void highlightMoves(Collection<ChessMove> moves) {
+        if (moves == null || moves.isEmpty()) {
+            displayError("No legal moves available for this piece.");
+            return;
+        }
+        Set<ChessPosition> highlightPositions = moves.stream()
+                .map(ChessMove::getEndPosition)
+                .collect(Collectors.toSet());
+        // Add the start position to the set to highlight it as well
+        highlightPositions.add(moves.iterator().next().getStartPosition());
+
+        redrawBoardWithHighlights(highlightPositions);
+    }
+
+    private void redrawBoardWithHighlights(Set<ChessPosition> highlightPositions) {
+        ChessGame game = getCurrentGame();
+        if (game != null) {
+            ChessBoard board = game.getBoard();
+            boolean whiteAtBottom = getCurrentDisplayColor() == ChessGame.TeamColor.WHITE;
+            DrawChessBoard.printChessBoardWithHighlights(System.out, board, whiteAtBottom, highlightPositions);
+        } else {
+            displayError("No game is currently in progress to redraw.");
+        }
+    }
+
+
 
     public void leaveGame() {
         if (currentGameID == null) {
