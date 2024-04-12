@@ -80,9 +80,7 @@ public class CommandHandler {
                     System.out.println("Usage: join <GAME NUMBER> <COLOR>");
                 } else {
                     try {
-                        int gameNumber = Integer.parseInt(parts[1]);
-                        String color = parts[2];
-                        joinGame(gameNumber, color);
+                        joinGame(Integer.parseInt(parts[1]), parts[2]);
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid game number format.");
                     }
@@ -115,10 +113,8 @@ public class CommandHandler {
                 } else if (parts.length != 3) {
                     System.out.println("Usage: move <START POSITION> <END POSITION>");
                 } else {
-                    String startPos = parts[1].toLowerCase();
-                    String endPos = parts[2].toLowerCase();
-                    if (isValidPosition(startPos) && isValidPosition(endPos)) {
-                        makeMove(startPos, endPos);
+                    if (isValidPosition(parts[1].toLowerCase()) && isValidPosition(parts[2].toLowerCase())) {
+                        makeMove(parts[1].toLowerCase(), parts[2].toLowerCase());
                     } else {
                         System.out.println("Usage: move <START POSITION> <END POSITION>");
                         System.out.println("Position should be from 'a1' to 'h8'.");
@@ -132,7 +128,6 @@ public class CommandHandler {
                     System.out.println("You can only redraw the board during a game.");
                 }
             }
-
             default -> System.out.println("Unknown command.");
         }
     }
