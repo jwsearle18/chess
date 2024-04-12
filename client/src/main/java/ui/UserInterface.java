@@ -18,8 +18,35 @@ public class UserInterface {
 
     private final CommandHandler commandHandler;
     private WebSocketFacade ws;
+
+    private ChessGame currentGame;
+    private ChessGame.TeamColor playerColor;
+    public void setCurrentDisplayColor(ChessGame.TeamColor playerColor) {
+        this.playerColor = playerColor;
+    }
+
+    public ChessGame.TeamColor getCurrentDisplayColor() {
+        return playerColor;
+    }
+
+    public void setCurrentGame(ChessGame game) {
+        this.currentGame = game;
+    }
+
+    public ChessGame getCurrentGame() {
+        return currentGame;
+    }
+
     public void setCurrentGameID(Integer gameID) {
         this.currentGameID = gameID;
+    }
+
+    public WebSocketFacade getWs() {
+        return ws;
+    }
+
+    public Integer getCurrentGameID() {
+        return currentGameID;
     }
 
 
@@ -51,16 +78,40 @@ public class UserInterface {
     }
 
     public void tick() {
+//        try (Scanner scanner = new Scanner(System.in)) {
+//
+//            if (currentState != State.CONNECTING) {
+//                System.out.printf("[%s] >>> ", currentState.name());
+//
+//                String command = scanner.nextLine().trim();
+//                commandHandler.handleCommand(command, currentState);
+//            }
+//
+//            tick();
+//        }
+
         try (Scanner scanner = new Scanner(System.in)) {
+            while (true) {
+                // If not connecting, prompt for the next command
+                if (currentState != State.CONNECTING) {
+                    promptNextCommand();
+                }
 
-            if (currentState != State.CONNECTING) {
-                System.out.printf("[%s] >>> ", currentState.name());
-
+                // Process user input
                 String command = scanner.nextLine().trim();
                 commandHandler.handleCommand(command, currentState);
-            }
 
-            tick();
+                // In case the state is set to CONNECTING by commandHandler, wait until it's not CONNECTING anymore
+                while (currentState == State.CONNECTING) {
+                    // It could be good to add a sleep here to prevent a tight loop
+                    try {
+                        Thread.sleep(100); // Just a brief pause to prevent a tight loop
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt(); // Restore interrupted status
+                    }
+                }
+            }
+            // The tick method should not recursively call itself to avoid stack overflow
         }
     }
 
@@ -89,6 +140,7 @@ public class UserInterface {
                 displayError("WebSocket is not initialized.");
                 return;
             }
+            setCurrentDisplayColor(playerColor);
             ws.joinPlayer(authToken, gameID, playerColor);
         } catch (Exception e) {
             displayError("Error sending join command: " + e.getMessage());
@@ -101,6 +153,7 @@ public class UserInterface {
                 displayError("WebSocket is not initialized.");
                 return;
             }
+            setCurrentDisplayColor(ChessGame.TeamColor.WHITE);
             ws.joinObserver(authToken, gameID);
             System.out.println("You are now observing the game.");
         } catch (Exception e) {
@@ -108,12 +161,42 @@ public class UserInterface {
         }
     }
 
+    public void redrawBoard() {
+        // Assuming you have a way to get the current ChessGame state
+        // For example, let's say you have a getCurrentGame method that retrieves it
+        ChessGame currentGame = getCurrentGame();
+        if (currentGame != null) {
+            updateChessBoard(currentGame, getCurrentDisplayColor());
+        } else {
+            displayError("No game is currently in progress to redraw.");
+        }
+    }
+
     public void updateChessBoard(ChessGame game, ChessGame.TeamColor playerColor) {
 
+
+
         ChessBoard board = game.getBoard();
-        boolean whiteAtBottom = playerColor == ChessGame.TeamColor.WHITE;
+        boolean whiteAtBottom = getCurrentDisplayColor() == ChessGame.TeamColor.WHITE;
         DrawChessBoard.printChessBoards(System.out, board, whiteAtBottom);
 
+        try {
+            Thread.sleep(100); // short delay to ensure the board is drawn
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+        }
+
+//        promptNextCommand();
+
+    }
+    private void promptNextCommand() {
+        // Wait a brief moment to ensure the board update has finished printing
+        try {
+            Thread.sleep(100); // wait for 100 milliseconds
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+        }
+        System.out.printf("[%s] >>> ", currentState.name());
     }
 
     public void displayError(String errorMessage) {

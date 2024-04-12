@@ -2,12 +2,16 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import websocket.WebSocketFacade;
+import websocketMessages.serverMessages.ErrorMessage;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,31 +104,73 @@ public class CommandHandler {
             }
             case "leave" -> {
                 if (currentState == State.IN_GAME) {
-                    leaveGame();
+                    ui.leaveGame();
                 } else {
                     System.out.println("You are not in a game to leave.");
                 }
             }
+            case "move" -> {
+                if (currentState != State.IN_GAME) {
+                    System.out.println("You must be in a game to make a move.");
+                } else if (parts.length != 3) {
+                    System.out.println("Usage: move <START POSITION> <END POSITION>");
+                } else {
+                    String startPos = parts[1].toLowerCase();
+                    String endPos = parts[2].toLowerCase();
+                    if (isValidPosition(startPos) && isValidPosition(endPos)) {
+                        makeMove(startPos, endPos);
+                    } else {
+                        System.out.println("Usage: move <START POSITION> <END POSITION>");
+                        System.out.println("Position should be from 'a1' to 'h8'.");
+                    }
+                }
+            }
+            case "redraw" -> {
+                if (currentState == State.IN_GAME) {
+                    redraw();
+                } else {
+                    System.out.println("You can only redraw the board during a game.");
+                }
+            }
+
             default -> System.out.println("Unknown command.");
         }
     }
 
-    private void leaveGame() {
-//        Integer gameID = ui.getCurrentGameID();
-//        if(gameID == null) {
-//            System.out.println("You are not currently in a game.");
-//            return;
-//        }
-//            String authToken = httpClient.getAuthToken();
-//            if (authToken == null) {
-//                System.out.println("Authentication required to leave game.");
-//                return;
-//            }
-//
-//            ui.leaveGame();
-        ui.leaveGame();
-
+    private void redraw() {
+        ui.redrawBoard();
     }
+    private boolean isValidPosition(String position) {
+        return position.matches("^[a-h][1-8]$");
+    }
+
+    private void makeMove(String start, String end) {
+        try {
+            ChessPosition startPos = convertToChessPosition(start);
+            ChessPosition endPos = convertToChessPosition(end);
+            ChessMove move = new ChessMove(startPos, endPos, null); //fix this later adding promo piece stuff
+
+            String authToken = httpClient.getAuthToken();
+            Integer currentGameID = ui.getCurrentGameID();
+
+            if (ui.getWs() != null) {
+                ui.getWs().makeMove(authToken, currentGameID, move);
+            } else {
+                System.out.println("WebSocket connection is not established.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            ui.displayError(e.getMessage());
+        }
+    }
+
+    private ChessPosition convertToChessPosition(String pos) {
+        int column = pos.charAt(0) - 'a' + 1;
+        int row = Integer.parseInt(pos.substring(1));
+        return new ChessPosition(row, column);
+    }
+
 
     private void observeGame(int gameNumber) {
         if (!gameNumbertoGameID.containsKey(gameNumber)) {

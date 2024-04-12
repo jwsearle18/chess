@@ -15,10 +15,12 @@ public class NotificationHandlerImplementation implements NotificationHandler{
     }
     @Override
     public void handleLoadGame(LoadGameMessage message) {
-        ChessGame.TeamColor displayColor = message.getPlayerColor();
-        if (displayColor == null) {
-            displayColor = ChessGame.TeamColor.WHITE;
-        }
+//        ChessGame.TeamColor displayColor = message.getPlayerColor();
+//        if (displayColor == null) {
+//            displayColor = ChessGame.TeamColor.WHITE;
+//        }
+        ChessGame.TeamColor displayColor = ui.getCurrentDisplayColor();
+        ui.setCurrentGame(message.getGame());
         ui.updateChessBoard(message.getGame(), displayColor);
         ui.setCurrentState(State.IN_GAME);
     }
