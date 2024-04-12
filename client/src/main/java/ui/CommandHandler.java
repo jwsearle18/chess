@@ -322,8 +322,8 @@ public class CommandHandler {
                 System.out.println("""
                         create <NAME> - a game
                         list - games
-                        join <ID> [WHITE|BLACK] - a game
-                        observe <ID> - a game
+                        join <GAME NUMBER> [WHITE|BLACK] - a game
+                        observe <GAME NUMBER> - a game
                         logout - when you are done
                         quit - playing chess
                         help - with possible commands

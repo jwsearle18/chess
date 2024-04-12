@@ -166,18 +166,6 @@ public class WebSocketHandler {
                 session.getRemote().sendString(gson.toJson(errorMessage));
                 return;
             }
-            if (playerColor != game.getTeamTurn()) {
-                ErrorMessage errorMessage = new ErrorMessage("Error: Not your turn pal.");
-                session.getRemote().sendString(gson.toJson(errorMessage));
-                return;
-            }
-            ChessPosition startPos = makeMoveCommand.getMove().getStartPosition();
-            Collection<ChessMove> validMoves = game.validMoves(startPos);
-            if (!validMoves.contains(makeMoveCommand.getMove())) {
-                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid move, Sarge, try again perhaps.");
-                session.getRemote().sendString(gson.toJson(errorMessage));
-                return;
-            }
 
             if (gameData.game().getGameStatus() == ChessGame.GameStatus.INACTIVE) {
                 ErrorMessage errorMessage = new ErrorMessage("Error: Game not Active.");
@@ -185,7 +173,42 @@ public class WebSocketHandler {
                 return;
             }
 
+            if (playerColor != game.getTeamTurn()) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Not your turn pal.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+
+            ChessPosition startPos = makeMoveCommand.getMove().getStartPosition();
+            Collection<ChessMove> validMoves = game.validMoves(startPos);
+            if (!validMoves.contains(makeMoveCommand.getMove())) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Invalid move, Sir, try again perhaps.");
+                session.getRemote().sendString(gson.toJson(errorMessage));
+                return;
+            }
+
             game.makeMove(makeMoveCommand.getMove());
+
+            ChessGame.TeamColor opponentColor = (playerColor == ChessGame.TeamColor.WHITE) ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+
+            boolean isInCheck = game.isInCheck(opponentColor);
+            boolean isInCheckmate = game.isInCheckmate(opponentColor);
+
+            String opponentName = (opponentColor == ChessGame.TeamColor.WHITE) ? gameData.whiteUsername() : gameData.blackUsername();
+
+            if (isInCheck) {
+                if (!isInCheckmate) {
+                    String checkNotification = String.format("%s is in check.", opponentName);
+                    connections.broadcast(makeMoveCommand.getGameID(), null, gson.toJson(new NotificationMessage(checkNotification)));
+                }
+            }
+
+            if (isInCheckmate) {
+                String checkmateNotification = String.format("%s is in checkmate. Game Over!", opponentName);
+                connections.broadcast(makeMoveCommand.getGameID(), null, gson.toJson(new NotificationMessage(checkmateNotification)));
+                game.setGameStatus(ChessGame.GameStatus.INACTIVE);
+            }
+
             gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game));
 
             LoadGameMessage loadGameMessage = new LoadGameMessage(game, null);

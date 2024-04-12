@@ -233,12 +233,6 @@ public class ChessGame {
     }
 
 
-
-
-
-
-
-
     /**
      * Sets this game's chessboard with a given board
      *
