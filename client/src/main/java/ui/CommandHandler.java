@@ -93,8 +93,7 @@ public class CommandHandler {
                     System.out.println("Usage: observe <GAME NUMBER>");
                 } else {
                     try {
-                        int gameNumber = Integer.parseInt(parts[1]);
-                        observeGame(gameNumber);
+                        observeGame(Integer.parseInt(parts[1]));
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid game number format.");
                     }
