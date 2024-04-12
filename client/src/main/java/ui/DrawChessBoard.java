@@ -32,18 +32,12 @@ public class DrawChessBoard {
 
     public static void printColumnLabel(PrintStream out, boolean whiteAtBottom) {
         String[] colLabelsW = {EMPTY, " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", EMPTY};
-//        String[] colLabelsB = {EMPTY, " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EMPTY};
-//        if(whiteAtBottom) {
+
             for (String colLabel : colLabelsW) {
                 out.print(SET_BG_COLOR_LIGHT_GREY + colLabel + RESET_BG_COLOR);
             }
             out.println();
-//        } else {
-//            for (String colLabel : colLabelsB) {
-//                out.print(SET_BG_COLOR_LIGHT_GREY + colLabel + RESET_BG_COLOR);
-//            }
-//            out.println();
-//        }
+
     }
 
     public static void drawBoard(PrintStream out, ChessBoard board, boolean whiteAtBottom) {
