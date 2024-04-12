@@ -57,45 +57,35 @@ public class ChessPiece {
         };
     }
 
+
+    private Collection<ChessMove> generateMovesInDirections(ChessBoard board, ChessPosition myPosition, int[][] directions) {
+        HashSet<ChessMove> validMoves = new HashSet<>();
+        for (int[] dir : directions) {
+            for (ChessPosition position : generateLineMoves(myPosition, dir[0], dir[1])) {
+                if (board.getPiece(position) == null) {
+                    validMoves.add(new ChessMove(myPosition, position, null));
+                } else {
+                    if (isEnemy(board.getPiece(position))) {
+                        validMoves.add(new ChessMove(myPosition, position, null));
+                    }
+                    break; // Stop at the first piece encountered
+                }
+            }
+        }
+        return validMoves;
+    }
+
     // Diagonal Moves for Bishop and Queen
     private Collection<ChessMove> generateDiagonalMoves(ChessBoard board, ChessPosition myPosition) {
-        HashSet<ChessMove> validMoves = new HashSet<>();
         int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-
-        for (int[] dir : directions) {
-            for (ChessPosition position : generateLineMoves(myPosition, dir[0], dir[1])) {
-                if (board.getPiece(position) == null) {
-                    validMoves.add(new ChessMove(myPosition, position, null));
-                } else {
-                    if (isEnemy(board.getPiece(position))) {
-                        validMoves.add(new ChessMove(myPosition, position, null));
-                    }
-                    break; // Stop at the first piece encountered
-                }
-            }
-        }
-        return validMoves;
+        return generateMovesInDirections(board, myPosition, directions);
     }
 
-    // Straight Moves for Rook and Queen
     private Collection<ChessMove> generateStraightMoves(ChessBoard board, ChessPosition myPosition) {
-        HashSet<ChessMove> validMoves = new HashSet<>();
         int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-
-        for (int[] dir : directions) {
-            for (ChessPosition position : generateLineMoves(myPosition, dir[0], dir[1])) {
-                if (board.getPiece(position) == null) {
-                    validMoves.add(new ChessMove(myPosition, position, null));
-                } else {
-                    if (isEnemy(board.getPiece(position))) {
-                        validMoves.add(new ChessMove(myPosition, position, null));
-                    }
-                    break; // Stop at the first piece encountered
-                }
-            }
-        }
-        return validMoves;
+        return generateMovesInDirections(board, myPosition, directions);
     }
+
 
     // Combined Moves for Queen
     private Collection<ChessMove> generateQueenMoves(ChessBoard board, ChessPosition myPosition) {

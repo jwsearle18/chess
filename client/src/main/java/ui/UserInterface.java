@@ -201,7 +201,7 @@ public class UserInterface {
 
     public void displayError(String errorMessage) {
         System.out.println("\n" + errorMessage);
-        System.out.printf("[%s] >>> ", currentState.name());
+//        System.out.printf("[%s] >>> ", currentState.name());
     }
 
     public void displayNotification(String notificationMessage) {
