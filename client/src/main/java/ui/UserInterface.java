@@ -78,17 +78,6 @@ public class UserInterface {
     }
 
     public void tick() {
-//        try (Scanner scanner = new Scanner(System.in)) {
-//
-//            if (currentState != State.CONNECTING) {
-//                System.out.printf("[%s] >>> ", currentState.name());
-//
-//                String command = scanner.nextLine().trim();
-//                commandHandler.handleCommand(command, currentState);
-//            }
-//
-//            tick();
-//        }
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
@@ -101,17 +90,14 @@ public class UserInterface {
                 String command = scanner.nextLine().trim();
                 commandHandler.handleCommand(command, currentState);
 
-                // In case the state is set to CONNECTING by commandHandler, wait until it's not CONNECTING anymore
                 while (currentState == State.CONNECTING) {
-                    // It could be good to add a sleep here to prevent a tight loop
                     try {
-                        Thread.sleep(100); // Just a brief pause to prevent a tight loop
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt(); // Restore interrupted status
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
-            // The tick method should not recursively call itself to avoid stack overflow
         }
     }
 
@@ -162,8 +148,7 @@ public class UserInterface {
     }
 
     public void redrawBoard() {
-        // Assuming you have a way to get the current ChessGame state
-        // For example, let's say you have a getCurrentGame method that retrieves it
+
         ChessGame currentGame = getCurrentGame();
         if (currentGame != null) {
             updateChessBoard(currentGame, getCurrentDisplayColor());
@@ -181,27 +166,24 @@ public class UserInterface {
         DrawChessBoard.printChessBoards(System.out, board, whiteAtBottom);
 
         try {
-            Thread.sleep(100); // short delay to ensure the board is drawn
+            Thread.sleep(100);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore interrupted status
+            Thread.currentThread().interrupt();
         }
 
-//        promptNextCommand();
 
     }
     private void promptNextCommand() {
-        // Wait a brief moment to ensure the board update has finished printing
         try {
-            Thread.sleep(100); // wait for 100 milliseconds
+            Thread.sleep(100);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore interrupted status
+            Thread.currentThread().interrupt();
         }
         System.out.printf("[%s] >>> ", currentState.name());
     }
 
     public void displayError(String errorMessage) {
         System.out.println("\n" + errorMessage);
-//        System.out.printf("[%s] >>> ", currentState.name());
     }
 
     public void displayNotification(String notificationMessage) {

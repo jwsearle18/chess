@@ -88,9 +88,4 @@ public class WebSocketFacade extends Endpoint {
 
     }
 
-    public void closeSession() throws IOException {
-        if (this.session != null) {
-            this.session.close();
-        }
-    }
 }
