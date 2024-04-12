@@ -86,12 +86,10 @@ public class UserInterface {
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
-                // If not connecting, prompt for the next command
                 if (currentState != State.CONNECTING) {
                     promptNextCommand();
                 }
 
-                // Process user input
                 String command = scanner.nextLine().trim();
                 commandHandler.handleCommand(command, currentState);
 

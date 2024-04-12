@@ -193,20 +193,21 @@ public class WebSocketHandler {
 
             boolean isInCheck = game.isInCheck(opponentColor);
             boolean isInCheckmate = game.isInCheckmate(opponentColor);
+            boolean isInStalemate = game.isInStalemate(opponentColor);
 
             String opponentName = (opponentColor == ChessGame.TeamColor.WHITE) ? gameData.whiteUsername() : gameData.blackUsername();
-
-            if (isInCheck) {
-                if (!isInCheckmate) {
-                    String checkNotification = String.format("%s is in check.", opponentName);
-                    connections.broadcast(makeMoveCommand.getGameID(), null, gson.toJson(new NotificationMessage(checkNotification)));
-                }
-            }
-
             if (isInCheckmate) {
                 String checkmateNotification = String.format("%s is in checkmate. Game Over!", opponentName);
                 connections.broadcast(makeMoveCommand.getGameID(), null, gson.toJson(new NotificationMessage(checkmateNotification)));
                 game.setGameStatus(ChessGame.GameStatus.INACTIVE);
+            } else if (isInStalemate) {
+                NotificationMessage stalemateNotification = new NotificationMessage("Stalemate. Game Over!");
+                connections.broadcast(makeMoveCommand.getGameID(), null, gson.toJson(stalemateNotification));
+                game.setGameStatus(ChessGame.GameStatus.INACTIVE);
+            } else if (isInCheck) {
+                String checkNotification = String.format("%s is in check.", opponentName);
+                connections.broadcast(makeMoveCommand.getGameID(), null, gson.toJson(new NotificationMessage(checkNotification)));
+
             }
 
             gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game));
