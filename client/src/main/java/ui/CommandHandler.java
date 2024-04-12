@@ -212,11 +212,42 @@ public class CommandHandler {
         return position.matches("^[a-h][1-8]$");
     }
 
+    private ChessPiece.PieceType requestPromotionType() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Choose a piece for promotion (queen, rook, bishop, knight) >>> ");
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase();
+            switch (input) {
+                case "queen":
+                    return ChessPiece.PieceType.QUEEN;
+                case "rook":
+                    return ChessPiece.PieceType.ROOK;
+                case "bishop":
+                    return ChessPiece.PieceType.BISHOP;
+                case "knight":
+                    return ChessPiece.PieceType.KNIGHT;
+                default:
+                    System.out.print("Invalid choice, please enter 'queen', 'rook', 'bishop', or 'knight' >>> ");
+                    break;
+            }
+        }
+    }
+
     private void makeMove(String start, String end) {
         try {
             ChessPosition startPos = convertToChessPosition(start);
             ChessPosition endPos = convertToChessPosition(end);
-            ChessMove move = new ChessMove(startPos, endPos, null); //fix this later adding promo piece stuff
+            ChessPiece piece = ui.getCurrentGame().getBoard().getPiece(startPos);
+
+            ChessPiece.PieceType promoPieceType = null;
+            if (piece != null && piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                if ((piece.getTeamColor() == ChessGame.TeamColor.WHITE && endPos.getRow() == 8) ||
+                        (piece.getTeamColor() == ChessGame.TeamColor.BLACK && endPos.getRow() == 1)) {
+                    promoPieceType = requestPromotionType();
+                }
+            }
+
+            ChessMove move = new ChessMove(startPos, endPos, promoPieceType);
 
             String authToken = httpClient.getAuthToken();
             Integer currentGameID = ui.getCurrentGameID();
@@ -232,6 +263,8 @@ public class CommandHandler {
             ui.displayError(e.getMessage());
         }
     }
+
+
 
     private ChessPosition convertToChessPosition(String pos) {
         int column = pos.charAt(0) - 'a' + 1;
